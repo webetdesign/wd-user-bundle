@@ -1,0 +1,13 @@
+{% extends 'layout/default_layout.html.twig' %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                {{ cms_render_content(page, 'content')|raw }}
+                {{ cms_render_content(page, 'media')|wd_media_image_responsive("thumb") }}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

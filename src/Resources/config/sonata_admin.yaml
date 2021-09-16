@@ -1,0 +1,18 @@
+services:
+  wd.user.admin.user:
+    class: WebEtDesign\UserBundle\Admin\User\UserAdmin
+    autowire: true
+    arguments: [ ~, '%wd_user.user.class%', ~]
+    tags:
+      - { name: sonata.admin, manager_type: orm, group: 'Utilisateur', label: Utilisateurs, label_translator_strategy: sonata.admin.label.strategy.underscore, icon: ~, label_catalogue: ~, default: true }
+    public: true
+
+
+  wd.user.admin.group:
+    class: WebEtDesign\UserBundle\Admin\User\GroupAdmin
+    autowire: true
+    arguments: [ ~, '%wd_user.group.class%', ~ ]
+    tags:
+      - { name: sonata.admin, manager_type: orm, group: 'Utilisateur', label: Groupes, label_translator_strategy: sonata.admin.label.strategy.underscore }
+    public: true
+

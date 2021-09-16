@@ -1,0 +1,237 @@
+<?php
+
+declare(strict_types=1);
+
+namespace WebEtDesign\UserBundle\Admin\User;
+
+use Sonata\AdminBundle\Admin\AbstractAdmin;
+use Sonata\AdminBundle\Datagrid\DatagridMapper;
+use Sonata\AdminBundle\Datagrid\ListMapper;
+use Sonata\AdminBundle\Form\FormMapper;
+use Sonata\AdminBundle\Form\Type\ModelType;
+use Sonata\DoctrineORMAdminBundle\Datagrid\ProxyQueryInterface;
+use Sonata\DoctrineORMAdminBundle\Filter\CallbackFilter;
+use Sonata\Exporter\Source\SourceIteratorInterface;
+use Symfony\Component\Form\Event\SubmitEvent;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use WebEtDesign\CmsBundle\Form\Type\SecurityRolesType;
+
+class UserAdmin extends AbstractAdmin
+{
+    protected $translationDomain = 'UserAdmin';
+
+    private UserPasswordEncoderInterface $userPasswordEncoder;
+
+    /**
+     * UserAdmin constructor.
+     * @param $code
+     * @param $name
+     * @param null $controller
+     * @param UserPasswordEncoderInterface $userPasswordEncoder
+     */
+    public function __construct($code, $name, $controller = null, UserPasswordEncoderInterface $userPasswordEncoder)
+    {
+        parent::__construct($code, $name, $controller);
+        $this->userPasswordEncoder = $userPasswordEncoder;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function configureListFields(ListMapper $listMapper): void
+    {
+        unset($this->listModes['mosaic']);
+
+        $listMapper
+            ->addIdentifier('username')
+            ->add('email')
+            ->add('groups')
+            ->add('enabled', null, ['editable' => true])
+            ->add('createdAt', null, ['format' => 'd/m/Y',]);
+
+        $actions = [
+            'edit'        => [],
+            'impersonate' => [
+                'template' => '@WDUserBundle/Resources/views/admin/CRUD/user/list__action_impersonate.html.twig',
+            ],
+        ];
+
+        $actions['delete'] = [];
+
+        $listMapper
+            ->add(
+                '_action',
+                null,
+                [
+                    'actions' => $actions,
+                ]
+            );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function configureDatagridFilters(DatagridMapper $filterMapper): void
+    {
+        $filterMapper
+            ->add(
+                'email',
+                null,
+                [
+                    'advanced_filter' => false,
+                ]
+            );
+
+        $filterMapper
+            ->add(
+                'groups',
+                null,
+                [
+                    'advanced_filter' => false,
+                ]
+            );
+
+        $filterMapper
+            ->add(
+                'enabled',
+                null,
+                [],
+                ChoiceType::class,
+                [
+                    'choices' => [
+                        'Oui' => true,
+                        'Non' => false,
+                    ],
+                ]
+            )
+            ->add(
+                'search',
+                CallbackFilter::class,
+                [
+                    'callback'        => static function (
+                        ProxyQueryInterface $query,
+                        string $alias,
+                        string $field,
+                        array $data
+                    ): bool {
+                        if (!$data['value']) {
+                            return false;
+                        }
+                        $query
+                            ->andWhere(
+                                '('.$alias.'.email like :email or '.$alias.'.firstname = :firstname or '.$alias.'.lastname = :lastname)'
+                            )
+                            ->setParameter('email', '%'.$data['value'].'%')
+                            ->setParameter('firstname', $data['value'])
+                            ->setParameter('lastname', $data['value']);
+
+                        return true;
+                    },
+                    'field_type'      => TextType::class,
+                    'field_options'   => [
+                        'attr' => [
+                            'placeholder' => 'Recherche par nom, prénom ou email',
+
+                        ],
+                    ],
+                    'advanced_filter' => false,
+                    'show_filter'     => true,
+                ]
+            );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function configureFormFields(FormMapper $formMapper): void
+    {
+        $formMapper
+            ->tab('Utilisateur')
+            ->with('General', ['class' => 'col-md-6'])->end()
+            ->with('Profil', ['class' => 'col-md-6'])->end()
+            ->end()
+            ->tab('Sécurité')
+            ->with('Permissions individuelles', ['class' => 'col-md-8'])->end()
+            ->with('Statut', ['class' => 'col-md-4'])->end()
+            ->with('Groupes', ['class' => 'col-md-4'])->end()
+            ->end();
+
+        $formMapper
+            ->tab('Utilisateur')
+            ->with('General')
+            ->add('username')
+            ->add('email')
+            ->add(
+                'plainPassword',
+                TextType::class,
+                [
+                    'required' => (!$this->getSubject() || null === $this->getSubject()->getId()),
+                ]
+            )
+            ->end()
+            ->with('Profil')
+            ->add('firstname', null, ['required' => false])
+            ->add('lastname', null, ['required' => false])
+            ->end()
+            ->end()
+            ->tab('Sécurité')
+            ->with('Statut')
+            ->add('enabled', null, ['required' => false])
+            ->end()
+            ->with('Groupes')
+            ->add(
+                'groups',
+                ModelType::class,
+                [
+                    'required' => false,
+                    'expanded' => true,
+                    'multiple' => true,
+                ]
+            )
+            ->end()
+            ->with('Permissions individuelles')
+            ->add(
+                'roles',
+                SecurityRolesType::class,
+                [
+                    'label'    => false,
+                    'expanded' => true,
+                    'multiple' => true,
+                    'required' => false,
+                ]
+            )
+            ->end()
+            ->end();
+
+        $formMapper->getFormBuilder()->addEventListener(
+            FormEvents::SUBMIT,
+            function (SubmitEvent $event) {
+                $user = $event->getData();
+                if ($user->getPlainPassword()) {
+                    $encoded = $this->userPasswordEncoder->encodePassword($user, $user->getPlainPassword());
+
+                    $user->setPassword($encoded);
+                    $user->setLastUpdatePassword(new \DateTime('now'));
+                    $event->setData($user);
+                }
+            }
+        );
+    }
+
+    public function getExportFormats()
+    {
+        return ['csv', 'xls'];
+    }
+
+    public function getDataSourceIterator(): SourceIteratorInterface
+    {
+        $iterator = parent::getDataSourceIterator();
+        $iterator->setDateTimeFormat('d/m/Y');
+
+        return $iterator;
+    }
+
+}

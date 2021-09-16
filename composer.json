@@ -1,0 +1,45 @@
+{
+  "name": "webetdesign/wd-user-bundle",
+  "type": "symfony-bundle",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Web&Design",
+      "homepage": "https://www.webetdesign.com"
+    }
+  ],
+  "repositories": [
+    {
+      "type": "git",
+      "url": "https://github.com/webetdesign/wd-rgbd-bundle.git"
+    }
+  ],
+  "require": {
+    "php": "^7.4",
+    "ext-gettext": "*",
+    "ext-json": "*",
+    "ext-zip": "*",
+    "symfony/console": "^4.4",
+    "doctrine/common": "^2.7",
+    "doctrine/orm": "^2.6",
+    "doctrine/doctrine-bundle": "^1.10",
+    "symfony/dependency-injection": "^4.0",
+    "webetdesign/wd-rgpd-bundle": "^1.0"
+  },
+  "require-dev": {
+    "sonata-project/admin-bundle": "^3.81",
+    "symfony/filesystem": "^4.0",
+    "symfony/phpunit-bridge": "^4.0",
+    "symfony/twig-bundle": "^4.0",
+    "symfony/yaml": "^4.0",
+    "doctrine/doctrine-fixtures-bundle": "^3.4"
+  },
+  "config": {
+    "sort-packages": true
+  },
+  "autoload": {
+    "psr-4": {
+      "WebEtDesign\\UserBundle\\": "src/"
+    }
+  }
+}

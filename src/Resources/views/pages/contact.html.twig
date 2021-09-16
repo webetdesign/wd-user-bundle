@@ -1,0 +1,54 @@
+{% extends "layout/default_layout.html.twig" %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {% for file in encore_entry_css_files('contact') %}
+        <link rel="stylesheet" href="{{ preload(file, { as: 'style', importance: 'high' }) }}">
+    {% endfor %}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <h1>{{ cms_render_content(page, 'title') }}</h1>
+
+                {{ form_start(form) }}
+                <div class="row">
+                    <div class="col-lg-6">
+                        {{ form_row(form.firstname) }}
+                    </div>
+                    <div class="col-lg-6">
+                        {{ form_row(form.lastname) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        {{ form_row(form.phone) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        {{ form_row(form.email) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        {{ form_row(form.content) }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        {{ form_row(form.rgpd) }}
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    {{ 'contact.submit_form'|trans({}, 'button') }}
+                </button>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

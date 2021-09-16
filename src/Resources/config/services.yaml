@@ -1,0 +1,16 @@
+services:
+  _defaults:
+    autowire: true      # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+  translation_activator:
+    class: WebEtDesign\UserBundle\Security\RoleActivator
+    arguments: [ "@security.authorization_checker" ]
+
+  WebEtDesign\UserBundle\:
+    resource: '../../*'
+    exclude: '../../{DependencyInjection,Entity}'
+
+  WebEtDesign\UserBundle\Controller\:
+    resource: '../../Controller'
+    tags: [ 'controller.service_arguments' ]
