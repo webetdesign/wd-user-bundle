@@ -146,6 +146,7 @@ class AdminLoginAuthenticator extends AbstractFormLoginAuthenticator
                     $targetPath = $this->urlGenerator->generate('admin_app_user_user_edit', ['id' => $this->user->getId()]);
                 }
             } catch (\Exception $e) {
+                dump($e);
                 throw new $e;
             }
         }
