@@ -38,7 +38,7 @@ class AdminLoginAuthenticator extends AbstractFormLoginAuthenticator
     private CsrfTokenManagerInterface $csrfTokenManager;
     private UserPasswordEncoderInterface $passwordEncoder;
     private LoginAttemptRepository $loginAttemptRepository;
-    private WDUser $user;
+    private ?WDUser $user;
 
     public function __construct(
         ParameterBagInterface $params,
