@@ -22,7 +22,7 @@
     "symfony/console": "^4.4",
     "doctrine/common": "^2.0|^3.0",
     "doctrine/orm": "^2.6",
-    "doctrine/doctrine-bundle": "^1.10|^2.4",
+    "doctrine/doctrine-bundle": "^1.10|^2.0",
     "symfony/dependency-injection": "^4.0",
     "webetdesign/wd-rgpd-bundle": "^1.0"
   },
