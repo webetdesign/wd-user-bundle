@@ -4,6 +4,7 @@
 namespace WebEtDesign\UserBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\Self_;
 use WebEtDesign\RgpdBundle\Annotations\Anonymizer;
 use WebEtDesign\RgpdBundle\Annotations\Exportable;
 
@@ -55,7 +56,7 @@ trait IdentityFields
      * @param string|null $firstname
      * @return IdentityFields
      */
-    public function setFirstname(?string $firstname): IdentityFields
+    public function setFirstname(?string $firstname): self
     {
         $this->firstname = $firstname;
         return $this;
@@ -73,7 +74,7 @@ trait IdentityFields
      * @param string|null $lastname
      * @return IdentityFields
      */
-    public function setLastname(?string $lastname): IdentityFields
+    public function setLastname(?string $lastname): self
     {
         $this->lastname = $lastname;
         return $this;
@@ -91,7 +92,7 @@ trait IdentityFields
      * @param string|null $gender
      * @return IdentityFields
      */
-    public function setGender(?string $gender): IdentityFields
+    public function setGender(?string $gender): self
     {
         $this->gender = $gender;
         return $this;
@@ -109,7 +110,7 @@ trait IdentityFields
      * @param string|null $locale
      * @return IdentityFields
      */
-    public function setLocale(?string $locale): IdentityFields
+    public function setLocale(?string $locale): self
     {
         $this->locale = $locale;
         return $this;
