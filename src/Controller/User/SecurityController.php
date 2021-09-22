@@ -14,7 +14,6 @@ use WebEtDesign\CmsBundle\Services\CmsHelper;
 class SecurityController extends AbstractController
 {
     /**
-     * @Route("/login", name=WebEtDesign\UserBundle\Security\FrontLoginAuthenticator::LOGIN_ROUTE)
      * @param AuthenticationUtils $authenticationUtils
      * @param CmsHelper $cmsHelper
      * @return Response
@@ -45,9 +44,6 @@ class SecurityController extends AbstractController
         );
     }
 
-    /**
-     * @Route("/logout", name="app_logout")
-     */
     public function logout()
     {
         throw new LogicException(
