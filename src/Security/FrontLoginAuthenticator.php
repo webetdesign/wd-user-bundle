@@ -3,6 +3,7 @@
 namespace WebEtDesign\UserBundle\Security;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -27,11 +28,12 @@ class FrontLoginAuthenticator extends AbstractFormLoginAuthenticator implements 
 
     public const LOGIN_ROUTE = 'app_login';
 
-    private EntityManagerInterface       $entityManager;
-    private UrlGeneratorInterface        $urlGenerator;
-    private CsrfTokenManagerInterface    $csrfTokenManager;
-    private UserPasswordEncoderInterface $passwordEncoder;
-    private RouterInterface              $router;
+    private EntityManagerInterface             $entityManager;
+    private UrlGeneratorInterface              $urlGenerator;
+    private CsrfTokenManagerInterface          $csrfTokenManager;
+    private UserPasswordEncoderInterface       $passwordEncoder;
+    private RouterInterface                    $router;
+    private ParameterBagInterface              $params;
 
     /**
      * FrontLoginAuthenticator constructor.
@@ -46,13 +48,15 @@ class FrontLoginAuthenticator extends AbstractFormLoginAuthenticator implements 
         UrlGeneratorInterface $urlGenerator,
         CsrfTokenManagerInterface $csrfTokenManager,
         UserPasswordEncoderInterface $passwordEncoder,
-        RouterInterface $router
+        RouterInterface $router,
+        ParameterBagInterface $params
     ) {
         $this->entityManager    = $entityManager;
         $this->urlGenerator     = $urlGenerator;
         $this->csrfTokenManager = $csrfTokenManager;
         $this->passwordEncoder  = $passwordEncoder;
         $this->router           = $router;
+        $this->params           = $params;
     }
 
     public function supports(Request $request): bool
@@ -83,7 +87,7 @@ class FrontLoginAuthenticator extends AbstractFormLoginAuthenticator implements 
             throw new InvalidCsrfTokenException();
         }
 
-        $user = $this->entityManager->getRepository(WDUser::class)->findOneBy(['username' => $credentials['username']]);
+        $user = $this->entityManager->getRepository($this->params->get('wd_user.user.class'))->findOneBy(['username' => $credentials['username']]);
 
         if (!$user) {
             throw new UsernameNotFoundException('Username could not be found.');
