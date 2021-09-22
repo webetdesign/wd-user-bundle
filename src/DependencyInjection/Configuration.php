@@ -27,7 +27,7 @@ class Configuration implements ConfigurationInterface
                     ->children()
                         ->scalarNode('class')->defaultValue('App\Entity\User\User')->end()
                         ->scalarNode('login_path')->defaultValue('/login')->end()
-                        ->scalarNode('logout_path')->defaultValue('/login')->end()
+                        ->scalarNode('logout_path')->defaultValue('/logout')->end()
                     ->end()
                 ->end()
                 ->arrayNode('group')
