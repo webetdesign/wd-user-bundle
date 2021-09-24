@@ -118,7 +118,7 @@ class FrontLoginAuthenticator extends AbstractFormLoginAuthenticator implements 
             return new RedirectResponse($targetPath);
         }
 
-        return new RedirectResponse($this->router->generate('home'));
+        return new RedirectResponse($this->router->generate($this->params->get('wd_user.login.success_redirect_route')));
     }
 
     protected function getLoginUrl(): string

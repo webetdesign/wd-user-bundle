@@ -35,6 +35,11 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('class')->defaultValue('App\Entity\User\Group')->end()
                     ->end()
                 ->end()
+                ->arrayNode('login')
+                    ->children()
+                        ->scalarNode('success_redirect_route')->defaultValue('home')->end()
+                    ->end()
+                ->end()
             ->end();
 
         return $treeBuilder;

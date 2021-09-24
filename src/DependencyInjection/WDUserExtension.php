@@ -49,6 +49,11 @@ class WDUserExtension extends Extension
             $config['user']['logout_path']
         );
 
+        $container->setParameter(
+            'wd_user.login.success_redirect_route',
+            $config['login']['success_redirect_route']
+        );
+
         $bundles = $container->getParameter('kernel.bundles');
         if (isset($bundles['SonataAdminBundle'])) {
             $loader->load('sonata_admin.yaml');
