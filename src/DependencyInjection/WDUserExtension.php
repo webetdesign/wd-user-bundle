@@ -58,5 +58,29 @@ class WDUserExtension extends Extension
         if (isset($bundles['SonataAdminBundle'])) {
             $loader->load('sonata_admin.yaml');
         }
+
+        # TODO :
+        # Ajouter le controller Controller/Azure/User/AzureController.php
+        # Ajouter l'authenticator Security/Azure/AzureAuthenticator.php
+        # Ajouter la page de login Ressources/views/admin/security/email_login.html.twig
+
+        # Supprimer le controller Controller/Admin/User/SecurityController.php
+        # Supprimer l'authenticator Security/AdminLoginAuthenticator.php
+        # Supprimer la page de login Ressources/views/admin/security/login.html.twig
+
+        if (isset($bundles['KnpUOAuth2ClientBundle'])) {
+//            $loader->load('azure.yaml');
+            $this->configAzure($config, $container);
+        }
+        else{
+//            $loader->load('admin_login.yaml');
+        }
+    }
+
+    private function configAzure(array $config, ContainerBuilder $container){
+        $container->setParameter(
+            'wd_user.azure_connect.clients',
+            $config['azure_directory']['clients']
+        );
     }
 }

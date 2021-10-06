@@ -40,6 +40,19 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('success_redirect_route')->defaultValue('home')->end()
                     ->end()
                 ->end()
+                ->arrayNode('azure_directory')
+                    ->children()
+                        ->arrayNode('clients')
+                            ->arrayPrototype()
+                                ->children()
+                                ->scalarNode('client_name')->defaultValue(null)->end()
+                                ->scalarNode('domain')->defaultValue(null)->end()
+                                ->arrayNode('roles')
+                                    ->scalarPrototype()->defaultValue([])->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                ->end()
             ->end();
 
         return $treeBuilder;
