@@ -1,0 +1,8 @@
+services:
+  WebEtDesign\UserBundle\Controller\Azure\:
+    resource: '../../Controller/Azure/*'
+    tags:
+      - {name: controller.service_arguments}
+
+  WebEtDesign\UserBundle\Security\Azure\:
+    resource: '../../Security/Azure/*'

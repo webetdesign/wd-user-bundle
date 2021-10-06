@@ -1,0 +1,6 @@
+services:
+  WebEtDesign\UserBundle\Controller\Admin\User\:
+    resource: '../../Controller/Admin/User/*'
+    tags:
+      - {name: controller.service_arguments}
+
