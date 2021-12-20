@@ -1,0 +1,11 @@
+password_request: Demande de réinitialisation
+password_reset: Réinitialisation du mot de passe
+
+form.request.email.placeholder: Email
+form.request.submit.label: Valider
+
+form.resetting.new_password.label: Nouveau mot de passe
+form.resetting.new_password.placeholder: Nouveau mot de passe
+form.resetting.new_password_confirmation.label: Confirmation
+form.resetting.new_password_confirmation.placeholder: Confirmation
+form.resetting.submit.label: Enregistrer

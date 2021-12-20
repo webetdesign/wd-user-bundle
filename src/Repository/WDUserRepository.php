@@ -5,6 +5,7 @@ namespace WebEtDesign\UserBundle\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Doctrine\Security\User\UserLoaderInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use WebEtDesign\UserBundle\Entity\WDUser;
@@ -17,9 +18,10 @@ use WebEtDesign\UserBundle\Entity\WDUser;
  */
 class WDUserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface, UserLoaderInterface
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, ParameterBagInterface $parameterBag)
     {
-        parent::__construct($registry, WDUser::class);
+        $class = $parameterBag->get('wd_user.user.class');
+        parent::__construct($registry, $class);
     }
 
     public function upgradePassword(UserInterface $user, string $newEncodedPassword): void

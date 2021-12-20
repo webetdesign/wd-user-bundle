@@ -90,7 +90,7 @@
                         </div>
                     </form>
 
-                    <a href="#">{{ 'forgotten_password'|trans({}, 'AdminLogin') }}</a>
+                    <a href="{{ path('admin_reset_password_request') }}">{{ 'forgotten_password'|trans({}, 'AdminLogin') }}</a>
                 {% endblock %}
             </div>
         </div>

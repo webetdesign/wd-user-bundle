@@ -23,8 +23,18 @@ class ResettingType extends AbstractType
                     'autocomplete' => 'new-password',
                 ],
             ],
-            'first_options'   => ['label' => 'form.resetting.new_password.label'],
-            'second_options'  => ['label' => 'form.resetting.new_password_confirmation.label'],
+            'first_options'   => [
+                'label' => 'form.resetting.new_password.label',
+                'attr' => [
+                    'placeholder' => 'form.resetting.new_password.placeholder'
+                ]
+            ],
+            'second_options'  => [
+                'label' => 'form.resetting.new_password_confirmation.label',
+                'attr' => [
+                    'placeholder' => 'form.resetting.new_password_confirmation.placeholder'
+                ]
+            ],
             'invalid_message' => 'form.resetting.error.new_password.mismatch',
         ]);
 
@@ -37,8 +47,8 @@ class ResettingType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class'         => WDUser::class,
-            'translation_domain' => 'resetting',
-            'validation_groups' => ['ResetPassword']
+            'translation_domain' => 'wd_user',
+            'validation_groups'  => ['ResetPassword']
         ]);
     }
 
