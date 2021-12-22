@@ -16,6 +16,9 @@ class ResettingRequestType extends AbstractType
     {
         $builder->add('email', EmailType::class, [
             'label' => 'form.request.email.label',
+            'attr' => [
+                'placeholder' => 'form.request.email.placeholder'
+            ]
         ]);
 
         $builder->add('submit', SubmitType::class, [
@@ -26,7 +29,7 @@ class ResettingRequestType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-           'translation_domain' => 'resetting',
+           'translation_domain' => 'wd_user',
         ]);
     }
 

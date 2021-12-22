@@ -32,8 +32,12 @@ class UserAdmin extends AbstractAdmin
      * @param null $controller
      * @param UserPasswordEncoderInterface $userPasswordEncoder
      */
-    public function __construct($code, $name, $controller = null, UserPasswordEncoderInterface $userPasswordEncoder)
-    {
+    public function __construct(
+        $code,
+        $name,
+        $controller = null,
+        UserPasswordEncoderInterface $userPasswordEncoder
+    ) {
         parent::__construct($code, $name, $controller);
         $this->userPasswordEncoder = $userPasswordEncoder;
     }
@@ -122,9 +126,9 @@ class UserAdmin extends AbstractAdmin
                         }
                         $query
                             ->andWhere(
-                                '('.$alias.'.email like :email or '.$alias.'.firstname = :firstname or '.$alias.'.lastname = :lastname)'
+                                '(' . $alias . '.email like :email or ' . $alias . '.firstname = :firstname or ' . $alias . '.lastname = :lastname)'
                             )
-                            ->setParameter('email', '%'.$data['value'].'%')
+                            ->setParameter('email', '%' . $data['value'] . '%')
                             ->setParameter('firstname', $data['value'])
                             ->setParameter('lastname', $data['value']);
 
@@ -155,8 +159,12 @@ class UserAdmin extends AbstractAdmin
             ->end()
             ->tab('Sécurité')
             ->with('Permissions individuelles', ['class' => 'col-md-8'])->end()
-            ->with('Statut', ['class' => 'col-md-4'])->end()
-            ->with('Groupes', ['class' => 'col-md-4'])->end()
+            ->with('Statut', ['class' => 'col-md-4'])->end();
+        if (property_exists($this->getSubject(), 'groups')) {
+            $formMapper
+                ->with('Groupes', ['class' => 'col-md-4'])->end();
+        }
+        $formMapper
             ->end();
 
         $formMapper
@@ -180,18 +188,25 @@ class UserAdmin extends AbstractAdmin
             ->tab('Sécurité')
             ->with('Statut')
             ->add('enabled', null, ['required' => false])
-            ->end()
-            ->with('Groupes')
-            ->add(
-                'groups',
-                ModelType::class,
-                [
-                    'required' => false,
-                    'expanded' => true,
-                    'multiple' => true,
-                ]
-            )
-            ->end()
+            ->end();
+
+        if (property_exists($this->getSubject(), 'groups')) {
+            $formMapper
+                ->with('Groupes')
+                ->add(
+                    'groups',
+                    ModelType::class,
+                    [
+                        'required' => false,
+                        'expanded' => true,
+                        'multiple' => true,
+                    ]
+                )
+                ->end();
+        }
+
+
+        $formMapper
             ->with('Permissions individuelles')
             ->add(
                 'roles',
@@ -211,7 +226,8 @@ class UserAdmin extends AbstractAdmin
             function (SubmitEvent $event) {
                 $user = $event->getData();
                 if ($user->getPlainPassword()) {
-                    $encoded = $this->userPasswordEncoder->encodePassword($user, $user->getPlainPassword());
+                    $encoded = $this->userPasswordEncoder->encodePassword($user,
+                        $user->getPlainPassword());
 
                     $user->setPassword($encoded);
                     $user->setLastUpdatePassword(new \DateTime('now'));
