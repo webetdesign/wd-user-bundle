@@ -75,8 +75,6 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable
      */
     protected ?array $permissions = [];
 
-    protected ?array $roles = [];
-
     /**
      * @var null|string
      * @ORM\Column(type="string", nullable=true)
@@ -184,16 +182,16 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable
         return $this;
     }
 
-    public function hasPermission($role): bool
+    public function hasPermission($permission): bool
     {
-        return in_array(strtoupper($role), $this->getPermissions(), true);
+        return in_array(strtoupper($permission), $this->getPermissions(), true);
     }
 
-    public function addPermission($role): WDUser
+    public function addPermission($permissions): WDUser
     {
-        $role = strtoupper($role);
-        if (!in_array($role, $this->roles, true)) {
-            $this->roles[] = $role;
+        $permissions = strtoupper($permissions);
+        if (!in_array($permissions, $this->permissions, true)) {
+            $this->permissions[] = $permissions;
         }
 
         return $this;
@@ -201,14 +199,14 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable
 
     public function getPermissions(): array
     {
-        $roles = (array)$this->roles;
+        $permissions = (array)$this->permissions;
 
-        return array_unique($roles);
+        return array_unique($permissions);
     }
 
-    public function setPermissions(array $roles): self
+    public function setPermissions(array $permissions): self
     {
-        $this->roles = $roles;
+        $this->permissions = $permissions;
 
         return $this;
     }
