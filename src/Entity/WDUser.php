@@ -52,17 +52,6 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable
      */
     protected ?string $username = null;
 
-    /**
-     * @var ?string
-     *
-     * @Anonymizer(type=Anonymizer::TYPE_UNIQ)
-     *
-     * @ORM\Column(type="string", unique=true, nullable=true)
-     * @Assert\NotBlank(groups={"registration", "editProfile"})
-     * @Exportable()
-     */
-    protected ?string $azureId = null;
-
 
     /**
      * @var ?string
@@ -422,25 +411,6 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable
     public function getEmail(): ?string
     {
         return $this->email;
-    }
-
-    /**
-     * @param string|null $azureId
-     * @return WDUser
-     */
-    public function setAzureId(?string $azureId): WDUser
-    {
-        $this->azureId = $azureId;
-
-        return $this;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getAzureId(): ?string
-    {
-        return $this->azureId;
     }
 
     /**

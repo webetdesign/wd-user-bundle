@@ -64,7 +64,7 @@ class AzureController extends AbstractController
     }
 
     /**
-     * @Route ("/admin/connect/azure", name="azure_connect")
+     * @Route ("/admin/connect/azure", name="admin_azure_connect")
      */
     public function azureCallBack(){
         // Just for set the redirection URI '/admin/connect/azure ,azure_connect'

@@ -18,12 +18,12 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 class AzureAuthenticator extends SocialAuthenticator
 {
-    private ClientRegistry $clientRegistry; // Current client
-    private EntityManagerInterface $em;
-    private RouterInterface $router;
-    private ParameterBagInterface $parameterBag;
-    private array $client;
-    private UserPasswordEncoderInterface $userPasswordEncoder;
+    protected ClientRegistry $clientRegistry; // Current client
+    protected EntityManagerInterface $em;
+    protected RouterInterface $router;
+    protected ParameterBagInterface $parameterBag;
+    protected array $client;
+    protected UserPasswordEncoderInterface $userPasswordEncoder;
 
     public function __construct(ClientRegistry $clientRegistry, EntityManagerInterface $em, RouterInterface $router, ParameterBagInterface $parameterBag, UserPasswordEncoderInterface $userPasswordEncoder)
     {
@@ -52,7 +52,7 @@ class AzureAuthenticator extends SocialAuthenticator
 
         // ****************************** Connection with Azure ***********************************
 
-        return $request->attributes->get('_route') === 'azure_connect' && $request->query->get('state') != null;
+        return $request->attributes->get('_route') === 'admin_azure_connect' && $request->query->get('state') != null;
     }
 
     public function getCredentials(Request $request)

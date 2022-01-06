@@ -46,7 +46,7 @@
                     <p class="login-box-msg">{{ 'title_wd'|trans({}, 'AdminLogin') }}</p>
 
                     {{ form_start(form) }}
-                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+{#                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">#}
 
                         <div class="form-group has-feedback">
                             {{ form_widget(form.username) }}
