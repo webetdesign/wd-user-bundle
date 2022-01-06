@@ -2,7 +2,6 @@
 
 namespace WebEtDesign\UserBundle\Security\Azure;
 
-use App\Entity\User\User;
 use Doctrine\ORM\EntityManagerInterface;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Security\Authenticator\SocialAuthenticator;
@@ -15,25 +14,36 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use WebEtDesign\UserBundle\Event\OnCreateUserFromAzureEvent;
 
 class AzureAuthenticator extends SocialAuthenticator
 {
-    protected ClientRegistry $clientRegistry; // Current client
-    protected EntityManagerInterface $em;
-    protected RouterInterface $router;
-    protected ParameterBagInterface $parameterBag;
-    protected array $client;
+    protected ClientRegistry               $clientRegistry; // Current client
+    protected EntityManagerInterface       $em;
+    protected RouterInterface              $router;
+    protected ParameterBagInterface        $parameterBag;
+    protected array                        $client;
     protected UserPasswordEncoderInterface $userPasswordEncoder;
+    private EventDispatcherInterface       $eventDispatcher;
 
-    public function __construct(ClientRegistry $clientRegistry, EntityManagerInterface $em, RouterInterface $router, ParameterBagInterface $parameterBag, UserPasswordEncoderInterface $userPasswordEncoder)
-    {
-        $this->clientRegistry = $clientRegistry;
-        $this->em = $em;
-        $this->router = $router;
-        $this->parameterBag = $parameterBag;
-        $this->client = [];
+    public function __construct(
+        ClientRegistry $clientRegistry,
+        EntityManagerInterface $em,
+        RouterInterface $router,
+        ParameterBagInterface $parameterBag,
+        UserPasswordEncoderInterface $userPasswordEncoder,
+        EventDispatcherInterface $eventDispatcher
+    ) {
+        $this->clientRegistry      = $clientRegistry;
+        $this->em                  = $em;
+        $this->router              = $router;
+        $this->parameterBag        = $parameterBag;
+        $this->client              = [];
         $this->userPasswordEncoder = $userPasswordEncoder;
+        $this->eventDispatcher     = $eventDispatcher;
     }
+
     public function start(Request $request, AuthenticationException $authException = null)
     {
         return new RedirectResponse(
@@ -46,7 +56,7 @@ class AzureAuthenticator extends SocialAuthenticator
     {
         // ****************************** Connection with password ***********************************
 
-        if ($request->attributes->get('_route') === 'admin_login_email' && isset($request->request->get('login_form')['password'])){
+        if ($request->attributes->get('_route') === 'admin_login_email' && isset($request->request->get('login_form')['password'])) {
             return true;
         }
 
@@ -59,10 +69,10 @@ class AzureAuthenticator extends SocialAuthenticator
     {
         // ****************************** Connection with password ***********************************
 
-        if ($request->attributes->get('_route') === 'admin_login_email'){
+        if ($request->attributes->get('_route') === 'admin_login_email') {
             $credentials = [
-                'username' => $request->request->get('email'),
-                'password' => $request->request->get('login_form')['password'],
+                'username'   => $request->request->get('email'),
+                'password'   => $request->request->get('login_form')['password'],
                 'csrf_token' => $request->request->get('_csrf_token'),
             ];
 
@@ -79,11 +89,12 @@ class AzureAuthenticator extends SocialAuthenticator
     {
         // ****************************** Connection with password ***********************************
 
-        if (is_array($credentials)){
+        if (is_array($credentials)) {
             $existingUser = $this->em->getRepository($this->parameterBag->get('wd_user.user.class'))
                 ->findOneBy(['email' => $credentials['username']]);
 
-            if ($existingUser && $this->userPasswordEncoder->isPasswordValid($existingUser, $credentials['password'])){ // Verify password
+            if ($existingUser && $this->userPasswordEncoder->isPasswordValid($existingUser,
+                    $credentials['password'])) { // Verify password
                 return $existingUser;
             }
 
@@ -93,7 +104,7 @@ class AzureAuthenticator extends SocialAuthenticator
         // ****************************** Connection with Azure ***********************************
 
         $azureUser = $this->clientRegistry->getClient($this->client['client_name'])->fetchUserFromToken($credentials);
-        $azureId = $azureUser->toArray()['oid'];
+        $azureId   = $azureUser->toArray()['oid'];
 
         $existingUser = $this->em->getRepository($this->parameterBag->get('wd_user.user.class'))
             ->findOneBy(['azureId' => $azureId]);
@@ -107,11 +118,11 @@ class AzureAuthenticator extends SocialAuthenticator
         $user = $this->em->getRepository($this->parameterBag->get('wd_user.user.class'))
             ->findOneBy(['email' => $email]);
 
-        if($user){
+        if ($user) {
             $user->setAzureId($azureId);
             $this->em->persist($user);
             $this->em->flush();
-        }else{
+        } else {
             $user = $this->createUser($azureUser->toArray(), $azureId, $this->client['roles']);
         }
         return $user;
@@ -121,15 +132,16 @@ class AzureAuthenticator extends SocialAuthenticator
     {
         // ****************************** Connection with password ***********************************
 
-        if ($request->attributes->get('_route') === 'admin_login_email'){
-            $request->getSession()->getFlashBag()->add('error','Mot de passe ou email incorrecte');
+        if ($request->attributes->get('_route') === 'admin_login_email') {
+            $request->getSession()->getFlashBag()->add('error', 'Mot de passe ou email incorrecte');
             $targetUrl = $this->router->generate('admin_login_email');
             return new RedirectResponse($targetUrl);
         }
 
         // ****************************** Connection with Azure ***********************************
 
-        $request->getSession()->getFlashBag()->add('error','Impossible de se connecter avec ce compte');
+        $request->getSession()->getFlashBag()->add('error',
+            'Impossible de se connecter avec ce compte');
         $targetUrl = $this->router->generate('sonata_admin_dashboard');
         return new RedirectResponse($targetUrl);
     }
@@ -142,13 +154,15 @@ class AzureAuthenticator extends SocialAuthenticator
 
     public function createUser(array $azureUser, string $azureId, array $roles)
     {
-        $user = new User();
+        $userClass = $this->parameterBag->get('wd_user.user.class');
+
+        $user = new $userClass();
 
         $user->setAzureId($azureId);
 
-        $name = explode(" ",$azureUser['name']);
+        $name = explode(" ", $azureUser['name']);
         $user->setFirstname($name[0]);
-        if(sizeof($name) == 2){
+        if (sizeof($name) == 2) {
             $user->setLastname($name[1]);
         }
 
@@ -157,18 +171,22 @@ class AzureAuthenticator extends SocialAuthenticator
         $user->setEnabled(true);
         $user->setRoles($roles);
 
+        // Subscribe to this event to add other data to user.
+        $event = new OnCreateUserFromAzureEvent('admin', $user, $azureUser);
+        $this->eventDispatcher->dispatch($event, OnCreateUserFromAzureEvent::NAME);
+
         $this->em->persist($user);
         $this->em->flush();
 
         return $user;
     }
 
-    public function getClient(String $name)
-    { // Get client by name with session
+    public function getClient(string $name)
+    {                                                                         // Get client by name with session
         $clients = $this->parameterBag->get('wd_user.azure_connect.clients'); //
-        $client = null;
-        foreach ($clients as $c){
-            if ($name === $c['client_name']){
+        $client  = null;
+        foreach ($clients as $c) {
+            if ($name === $c['client_name']) {
                 $client = $c;
             }
         }

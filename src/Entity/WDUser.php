@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use JetBrains\PhpStorm\Pure;
 use JsonSerializable;
 use Serializable;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -72,6 +73,8 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable
     /**
      * @ORM\Column(type="json", nullable=true)
      */
+    protected ?array $permissions = [];
+
     protected ?array $roles = [];
 
     /**
@@ -181,12 +184,12 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable
         return $this;
     }
 
-    public function hasRole($role): bool
+    public function hasPermission($role): bool
     {
-        return in_array(strtoupper($role), $this->getRoles(), true);
+        return in_array(strtoupper($role), $this->getPermissions(), true);
     }
 
-    public function addRole($role): WDUser
+    public function addPermission($role): WDUser
     {
         $role = strtoupper($role);
         if (!in_array($role, $this->roles, true)) {
@@ -196,21 +199,33 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable
         return $this;
     }
 
-    /**
-     * @see UserInterface
-     */
-    public function getRoles(): array
+    public function getPermissions(): array
     {
         $roles = (array)$this->roles;
 
         return array_unique($roles);
     }
 
-    public function setRoles(array $roles): self
+    public function setPermissions(array $roles): self
     {
         $this->roles = $roles;
 
         return $this;
+    }
+
+    public function hasRole($role): bool
+    {
+        return in_array(strtoupper($role), $this->getRoles(), true);
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getRoles(): array
+    {
+        $roles = $this->getPermissions();
+
+        return array_unique($roles);
     }
 
     /**

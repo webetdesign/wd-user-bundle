@@ -23,7 +23,7 @@ class UserAdmin extends AbstractAdmin
 {
     protected $translationDomain = 'UserAdmin';
 
-    private UserPasswordEncoderInterface $userPasswordEncoder;
+    protected UserPasswordEncoderInterface $userPasswordEncoder;
 
     /**
      * UserAdmin constructor.
