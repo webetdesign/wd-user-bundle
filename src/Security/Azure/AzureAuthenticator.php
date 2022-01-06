@@ -169,7 +169,7 @@ class AzureAuthenticator extends SocialAuthenticator
         $user->setEmail($azureUser['email']);
         $user->setUsername($azureUser['email']);
         $user->setEnabled(true);
-        $user->setRoles($roles);
+        $user->setPermissions($roles);
 
         // Subscribe to this event to add other data to user.
         $event = new OnCreateUserFromAzureEvent('admin', $user, $azureUser);

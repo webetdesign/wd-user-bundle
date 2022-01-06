@@ -209,7 +209,7 @@ class UserAdmin extends AbstractAdmin
         $formMapper
             ->with('Permissions individuelles')
             ->add(
-                'roles',
+                'permissions',
                 SecurityRolesType::class,
                 [
                     'label'    => false,

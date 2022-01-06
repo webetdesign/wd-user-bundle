@@ -68,7 +68,7 @@ class WDUserExtension extends Extension
         # Supprimer l'authenticator Security/AdminLoginAuthenticator.php
         # Supprimer la page de login Ressources/views/admin/security/login.html.twig
 
-        if (isset($bundles['KnpUOAuth2ClientBundle'])) {
+        if (isset($bundles['KnpUOAuth2ClientBundle']) && sizeof($config['azure_directory']['clients']) > 0) {
 //            $loader->load('azure.yaml');
             $this->configAzure($config, $container);
         }
