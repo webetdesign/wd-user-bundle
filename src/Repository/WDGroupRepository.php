@@ -20,7 +20,7 @@ class WDGroupRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry, ParameterBagInterface $parameterBag)
     {
-        $class = $parameterBag->get('wd_user.user.class');
+        $class = $parameterBag->get('wd_user.group.class');
         parent::__construct($registry, $class);
     }
 }
