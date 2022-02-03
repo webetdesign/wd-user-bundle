@@ -11,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use JsonSerializable;
 use Serializable;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use WebEtDesign\RgpdBundle\Annotations\Anonymizable;
@@ -24,7 +25,7 @@ use WebEtDesign\RgpdBundle\Validator\Constraints\PasswordStrength;
  * @Anonymizable()
  * @Exportable()
  */
-abstract class WDUser implements UserInterface, Serializable, JsonSerializable
+abstract class WDUser implements UserInterface, Serializable, JsonSerializable, PasswordAuthenticatedUserInterface
 {
     use IdentityFields;
     use RgpdUserFields;

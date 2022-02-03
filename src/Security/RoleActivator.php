@@ -9,15 +9,8 @@ use Translation\Bundle\EditInPlace\ActivatorInterface;
 
 class RoleActivator implements ActivatorInterface
 {
-    /**
-     * @var AuthorizationCheckerInterface
-     */
-    private $authorizationChecker;
-
-    public function __construct(AuthorizationCheckerInterface $authorizationChecker)
-    {
-        $this->authorizationChecker = $authorizationChecker;
-    }
+    public function __construct(private AuthorizationCheckerInterface $authorizationChecker)
+    {}
 
     /**
      * {@inheritdoc}
@@ -25,7 +18,7 @@ class RoleActivator implements ActivatorInterface
     public function checkRequest(Request $request = null): bool
     {
         try {
-            return $this->authorizationChecker->isGranted(['ROLE_TRANSLATE']);
+            return $this->authorizationChecker->isGranted('ROLE_TRANSLATE');
         } catch (AuthenticationCredentialsNotFoundException $e) {
             return false;
         }

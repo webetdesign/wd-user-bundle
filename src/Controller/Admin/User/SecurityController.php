@@ -12,6 +12,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
+
     /**
      * @Route("/admin/login", name=WebEtDesign\UserBundle\Security\AdminLoginAuthenticator::LOGIN_ROUTE)
      */
