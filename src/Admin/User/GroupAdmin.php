@@ -9,6 +9,7 @@ use Sonata\AdminBundle\Route\RouteCollection;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
+use Sonata\AdminBundle\Route\RouteCollectionInterface;
 use WebEtDesign\CmsBundle\Form\Type\SecurityRolesType;
 
 class GroupAdmin extends AbstractAdmin
@@ -22,10 +23,7 @@ class GroupAdmin extends AbstractAdmin
         'validation_groups' => 'Registration',
     ];
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getNewInstance()
+    protected function createNewInstance(): object
     {
         $class = $this->getClass();
 
@@ -70,7 +68,7 @@ class GroupAdmin extends AbstractAdmin
      */
     protected function configureListFields(ListMapper $listMapper): void
     {
-        unset($this->listModes['mosaic']);
+        unset($this->getListModes()['mosaic']);
 
         $listMapper
             ->addIdentifier('name')
@@ -78,7 +76,7 @@ class GroupAdmin extends AbstractAdmin
     }
 
 
-    protected function configureRoutes(RouteCollection $collection)
+    protected function configureRoutes(RouteCollection|RouteCollectionInterface $collection): void
     {
         $collection->remove('export');
         $collection->remove('show');
