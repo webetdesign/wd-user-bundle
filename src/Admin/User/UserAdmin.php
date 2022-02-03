@@ -47,7 +47,7 @@ class UserAdmin extends AbstractAdmin
      */
     protected function configureListFields(ListMapper $listMapper): void
     {
-        unset($this->listModes['mosaic']);
+        unset($this->getListModes()['mosaic']);
 
         $listMapper
             ->addIdentifier('username')
@@ -237,17 +237,10 @@ class UserAdmin extends AbstractAdmin
         );
     }
 
-    public function getExportFormats()
+    public function getExportFormats(): array
     {
         return ['csv', 'xls'];
     }
 
-    public function getDataSourceIterator(): SourceIteratorInterface
-    {
-        $iterator = parent::getDataSourceIterator();
-        $iterator->setDateTimeFormat('d/m/Y');
-
-        return $iterator;
-    }
 
 }
