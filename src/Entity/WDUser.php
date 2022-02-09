@@ -30,6 +30,8 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable
     use IdentityFields;
     use RgpdUserFields;
     use TimestampableEntity;
+    use AzureField;
+
 
     /**
      * @var null|int $id
