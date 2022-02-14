@@ -14,12 +14,12 @@ use WebEtDesign\CmsBundle\Form\Type\SecurityRolesType;
 
 class GroupAdmin extends AbstractAdmin
 {
-    protected $translationDomain = 'GroupAdmin';
+    protected string $translationDomain = 'GroupAdmin';
 
     /**
      * {@inheritdoc}
      */
-    protected $formOptions = [
+    protected array $formOptions = [
         'validation_groups' => 'Registration',
     ];
 
@@ -34,9 +34,9 @@ class GroupAdmin extends AbstractAdmin
     /**
      * {@inheritdoc}
      */
-    protected function configureDatagridFilters(DatagridMapper $datagridMapper): void
+    protected function configureDatagridFilters(DatagridMapper $filter): void
     {
-        $datagridMapper
+        $filter
             ->add('name')
         ;
     }
@@ -44,9 +44,9 @@ class GroupAdmin extends AbstractAdmin
     /**
      * {@inheritdoc}
      */
-    protected function configureFormFields(FormMapper $formMapper): void
+    protected function configureFormFields(FormMapper $form): void
     {
-        $formMapper
+        $form
             ->tab('Informations')
             ->with('General', ['class' => 'col-md-6'])
             ->add('name')
@@ -66,11 +66,11 @@ class GroupAdmin extends AbstractAdmin
     /**
      * {@inheritdoc}
      */
-    protected function configureListFields(ListMapper $listMapper): void
+    protected function configureListFields(ListMapper $list): void
     {
         unset($this->getListModes()['mosaic']);
 
-        $listMapper
+        $list
             ->addIdentifier('name')
             ->add('roles');
     }
