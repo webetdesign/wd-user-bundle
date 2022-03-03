@@ -54,7 +54,7 @@ class LoginFormType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-           'translation_domain' => 'AdminLogin',
+           'translation_domain' => 'wd_user',
             'email' => null
         ]);
     }
