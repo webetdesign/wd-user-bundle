@@ -200,7 +200,7 @@ class AdminLoginAuthenticator extends SocialAuthenticator
     ): RedirectResponse {
         $targetPath = $this->getTargetPath($request->getSession(), $providerKey);
 
-        if ($this->user && $this->user->getLastUpdatePassword()) {
+        if ($this->user && $this->user->getLastUpdatePassword() && !$this->user->getAzureId()) {
             try {
                 $timeAgo = new \DateTimeImmutable(sprintf('-%d weeks',
                     $this->parameterBag->get('security.admin_password_validity')));
