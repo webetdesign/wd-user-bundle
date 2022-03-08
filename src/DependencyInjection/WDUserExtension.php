@@ -60,12 +60,15 @@ class WDUserExtension extends Extension
             $config['azure_directory']['clients']
         );
 
+        $container->setParameter(
+            'wd_user.impersonate.logout_route',
+            $config['impersonate']['logout_route']
+        );
+
         $bundles = $container->getParameter('kernel.bundles');
         if (isset($bundles['SonataAdminBundle'])) {
             $loader->load('sonata_admin.yaml');
         }
-
-
     }
 
     private function configAzure(array $config, ContainerBuilder $container){

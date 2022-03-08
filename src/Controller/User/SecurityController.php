@@ -5,6 +5,7 @@ namespace WebEtDesign\UserBundle\Controller\User;
 
 use LogicException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -13,6 +14,13 @@ use WebEtDesign\CmsBundle\Services\CmsHelper;
 
 class SecurityController extends AbstractController
 {
+    protected ParameterBagInterface $parameterBag;
+
+    public function __construct(ParameterBagInterface $parameterBag)
+    {
+        $this->parameterBag = $parameterBag;
+    }
+
     /**
      * @param AuthenticationUtils $authenticationUtils
      * @param CmsHelper $cmsHelper
@@ -58,6 +66,6 @@ class SecurityController extends AbstractController
      */
     public function exitImpersonate(): RedirectResponse
     {
-        return $this->redirectToRoute('admin_app_user_user_list');
+        return $this->redirectToRoute($this->parameterBag->get('wd_user.impersonate.logout_route'));
     }
 }
