@@ -295,9 +295,10 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable
     /**
      * @param bool|null $newsletter
      */
-    public function setNewsletter(?bool $newsletter): void
+    public function setNewsletter(?bool $newsletter): self
     {
         $this->newsletter = $newsletter;
+        return $this;
     }
 
     /**
