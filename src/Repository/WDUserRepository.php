@@ -10,6 +10,7 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use WebEtDesign\UserBundle\Entity\WDUser;
 
+
 /**
  * @method WDUser|null find($id, $lockMode = null, $lockVersion = null)
  * @method WDUser|null findOneBy(array $criteria, array $orderBy = null)
@@ -18,10 +19,12 @@ use WebEtDesign\UserBundle\Entity\WDUser;
  */
 class WDUserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface, UserLoaderInterface
 {
+    protected string $class;
+
     public function __construct(ManagerRegistry $registry, ParameterBagInterface $parameterBag)
     {
-        $class = $parameterBag->get('wd_user.user.class');
-        parent::__construct($registry, $class);
+        $this->class = $parameterBag->get('wd_user.user.class');
+        parent::__construct($registry, $this->class);
     }
 
     public function upgradePassword(UserInterface $user, string $newEncodedPassword): void
@@ -39,7 +42,7 @@ class WDUserRepository extends ServiceEntityRepository implements PasswordUpgrad
 
         return $entityManager->createQuery(
             'SELECT u
-                FROM App\Entity\User\User u
+                FROM '.$this->class.' u
                 WHERE u.username = :query
                 OR u.email = :query'
         )
