@@ -28,8 +28,7 @@ class WDUserExtension extends Extension
         $loader = new Loader\YamlFileLoader($container,
             new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yaml');
-
-
+        
         $container->setParameter(
             'wd_user.user.class',
             $config['user']['class']
