@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use JetBrains\PhpStorm\Pure;
 use JsonSerializable;
 use Serializable;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -30,6 +31,8 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
     use IdentityFields;
     use RgpdUserFields;
     use TimestampableEntity;
+    use AzureField;
+
 
     /**
      * @var null|int $id
@@ -53,6 +56,7 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
      */
     protected ?string $username = null;
 
+
     /**
      * @var ?string
      * @Assert\NotBlank(groups={"registration", "editProfile"})
@@ -72,7 +76,7 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
     /**
      * @ORM\Column(type="json", nullable=true)
      */
-    protected ?array $roles = [];
+    protected ?array $permissions = [];
 
     /**
      * @var null|string
@@ -181,19 +185,38 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
         return $this;
     }
 
-    public function hasRole($role): bool
+    public function hasPermission($permission): bool
     {
-        return in_array(strtoupper($role), $this->getRoles(), true);
+        return in_array(strtoupper($permission), $this->getPermissions(), true);
     }
 
-    public function addRole($role): WDUser
+    public function addPermission($permissions): WDUser
     {
-        $role = strtoupper($role);
-        if (!in_array($role, $this->roles, true)) {
-            $this->roles[] = $role;
+        $permissions = strtoupper($permissions);
+        if (!in_array($permissions, $this->permissions, true)) {
+            $this->permissions[] = $permissions;
         }
 
         return $this;
+    }
+
+    public function getPermissions(): array
+    {
+        $permissions = (array)$this->permissions;
+
+        return array_unique($permissions);
+    }
+
+    public function setPermissions(array $permissions): self
+    {
+        $this->permissions = $permissions;
+
+        return $this;
+    }
+
+    public function hasRole($role): bool
+    {
+        return in_array(strtoupper($role), $this->getRoles(), true);
     }
 
     /**
@@ -201,22 +224,15 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
      */
     public function getRoles(): array
     {
-        $roles = (array)$this->roles;
+        $roles = $this->getPermissions();
 
         return array_unique($roles);
-    }
-
-    public function setRoles(array $roles): self
-    {
-        $this->roles = $roles;
-
-        return $this;
     }
 
     /**
      * @see UserInterface
      */
-    public function getPassword(): string
+    public function getPassword(): ?string
     {
         return $this->password;
     }
@@ -280,9 +296,10 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
     /**
      * @param bool|null $newsletter
      */
-    public function setNewsletter(?bool $newsletter): void
+    public function setNewsletter(?bool $newsletter): self
     {
         $this->newsletter = $newsletter;
+        return $this;
     }
 
     /**

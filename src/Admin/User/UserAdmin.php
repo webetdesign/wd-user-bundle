@@ -11,31 +11,32 @@ use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Form\Type\ModelType;
 use Sonata\DoctrineORMAdminBundle\Datagrid\ProxyQueryInterface;
 use Sonata\DoctrineORMAdminBundle\Filter\CallbackFilter;
+use Sonata\Exporter\Source\SourceIteratorInterface;
 use Symfony\Component\Form\Event\SubmitEvent;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use WebEtDesign\CmsBundle\Form\Type\SecurityRolesType;
 
 class UserAdmin extends AbstractAdmin
 {
-    protected string $translationDomain = 'UserAdmin';
+    protected $translationDomain = 'UserAdmin';
 
-    private UserPasswordHasherInterface $userPasswordEncoder;
+    protected UserPasswordEncoderInterface $userPasswordEncoder;
 
     /**
      * UserAdmin constructor.
      * @param $code
      * @param $name
      * @param null $controller
-     * @param UserPasswordHasherInterface $userPasswordEncoder
+     * @param UserPasswordEncoderInterface $userPasswordEncoder
      */
     public function __construct(
         $code,
         $name,
         $controller = null,
-        UserPasswordHasherInterface $userPasswordEncoder
+        UserPasswordEncoderInterface $userPasswordEncoder
     ) {
         parent::__construct($code, $name, $controller);
         $this->userPasswordEncoder = $userPasswordEncoder;
@@ -44,11 +45,11 @@ class UserAdmin extends AbstractAdmin
     /**
      * {@inheritdoc}
      */
-    protected function configureListFields(ListMapper $list): void
+    protected function configureListFields(ListMapper $listMapper): void
     {
-        unset($this->getListModes()['mosaic']);
+        unset($this->listModes['mosaic']);
 
-        $list
+        $listMapper
             ->addIdentifier('username')
             ->add('email')
             ->add('groups')
@@ -58,15 +59,15 @@ class UserAdmin extends AbstractAdmin
         $actions = [
             'edit'        => [],
             'impersonate' => [
-                'template' => '@WDUser/admin/CRUD/user/list__action_impersonate.html.twig',
+                'template' => '@WDUserBundle/Resources/views/admin/CRUD/user/list__action_impersonate.html.twig',
             ],
         ];
 
         $actions['delete'] = [];
 
-        $list
+        $listMapper
             ->add(
-                ListMapper::NAME_ACTIONS,
+                '_action',
                 null,
                 [
                     'actions' => $actions,
@@ -77,9 +78,9 @@ class UserAdmin extends AbstractAdmin
     /**
      * {@inheritdoc}
      */
-    protected function configureDatagridFilters(DatagridMapper $filter): void
+    protected function configureDatagridFilters(DatagridMapper $filterMapper): void
     {
-        $filter
+        $filterMapper
             ->add(
                 'email',
                 null,
@@ -88,7 +89,7 @@ class UserAdmin extends AbstractAdmin
                 ]
             );
 
-        $filter
+        $filterMapper
             ->add(
                 'groups',
                 null,
@@ -97,10 +98,12 @@ class UserAdmin extends AbstractAdmin
                 ]
             );
 
-        $filter
+        $filterMapper
             ->add(
                 'enabled',
                 null,
+                [],
+                ChoiceType::class,
                 [
                     'choices' => [
                         'Oui' => true,
@@ -147,9 +150,9 @@ class UserAdmin extends AbstractAdmin
     /**
      * {@inheritdoc}
      */
-    protected function configureFormFields(FormMapper $form): void
+    protected function configureFormFields(FormMapper $formMapper): void
     {
-        $form
+        $formMapper
             ->tab('Utilisateur')
             ->with('General', ['class' => 'col-md-6'])->end()
             ->with('Profil', ['class' => 'col-md-6'])->end()
@@ -158,13 +161,13 @@ class UserAdmin extends AbstractAdmin
             ->with('Permissions individuelles', ['class' => 'col-md-8'])->end()
             ->with('Statut', ['class' => 'col-md-4'])->end();
         if (property_exists($this->getSubject(), 'groups')) {
-            $form
+            $formMapper
                 ->with('Groupes', ['class' => 'col-md-4'])->end();
         }
-        $form
+        $formMapper
             ->end();
 
-        $form
+        $formMapper
             ->tab('Utilisateur')
             ->with('General')
             ->add('username')
@@ -188,7 +191,7 @@ class UserAdmin extends AbstractAdmin
             ->end();
 
         if (property_exists($this->getSubject(), 'groups')) {
-            $form
+            $formMapper
                 ->with('Groupes')
                 ->add(
                     'groups',
@@ -203,10 +206,10 @@ class UserAdmin extends AbstractAdmin
         }
 
 
-        $form
+        $formMapper
             ->with('Permissions individuelles')
             ->add(
-                'roles',
+                'permissions',
                 SecurityRolesType::class,
                 [
                     'label'    => false,
@@ -218,12 +221,12 @@ class UserAdmin extends AbstractAdmin
             ->end()
             ->end();
 
-        $form->getFormBuilder()->addEventListener(
+        $formMapper->getFormBuilder()->addEventListener(
             FormEvents::SUBMIT,
             function (SubmitEvent $event) {
                 $user = $event->getData();
                 if ($user->getPlainPassword()) {
-                    $encoded = $this->userPasswordEncoder->hashPassword($user,
+                    $encoded = $this->userPasswordEncoder->encodePassword($user,
                         $user->getPlainPassword());
 
                     $user->setPassword($encoded);
@@ -234,10 +237,17 @@ class UserAdmin extends AbstractAdmin
         );
     }
 
-    public function getExportFormats(): array
+    public function getExportFormats()
     {
         return ['csv', 'xls'];
     }
 
+    public function getDataSourceIterator(): SourceIteratorInterface
+    {
+        $iterator = parent::getDataSourceIterator();
+        $iterator->setDateTimeFormat('d/m/Y');
+
+        return $iterator;
+    }
 
 }

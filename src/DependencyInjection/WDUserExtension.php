@@ -28,7 +28,7 @@ class WDUserExtension extends Extension
         $loader = new Loader\YamlFileLoader($container,
             new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yaml');
-
+        
         $container->setParameter(
             'wd_user.user.class',
             $config['user']['class']
@@ -54,9 +54,28 @@ class WDUserExtension extends Extension
             $config['login']['success_redirect_route']
         );
 
+        $container->setParameter(
+            'wd_user.azure_connect.clients',
+            $config['azure_directory']['clients']
+        );
+
+        $container->setParameter(
+            'wd_user.impersonate.logout_route',
+            $config['impersonate']['logout_route']
+        );
+
         $bundles = $container->getParameter('kernel.bundles');
         if (isset($bundles['SonataAdminBundle'])) {
             $loader->load('sonata_admin.yaml');
         }
+    }
+
+    private function configAzure(array $config, ContainerBuilder $container){
+
+
+        $container->setParameter(
+            'wd_user.azure_connect.clients',
+            $config['azure_directory']['clients']
+        );
     }
 }

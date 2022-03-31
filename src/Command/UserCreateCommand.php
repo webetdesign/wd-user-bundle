@@ -64,7 +64,7 @@ class UserCreateCommand extends Command
         $user
             ->setUsername($email)
             ->setEmail($email)
-            ->setRoles(['ROLE_ADMIN'])
+            ->setPermissions(['ROLE_ADMIN'])
             ->setPassword($this->passwordEncoder->encodePassword($user, $password))
             ->setEnabled(true);
         $this->entityManager->persist($user);

@@ -9,3 +9,14 @@ form.resetting.new_password.placeholder: Nouveau mot de passe
 form.resetting.new_password_confirmation.label: Confirmation
 form.resetting.new_password_confirmation.placeholder: Confirmation
 form.resetting.submit.label: Enregistrer
+
+
+title_login_wd: Votre gestionnaire de site web sur-mesure
+
+forgotten_password: 'Mot de passe oublié ?'
+
+security.login.email: Votre adresse e-mail
+security.login.password: Mot de passe
+security.login.remember_me: 'Se souvenir de moi'
+security.login.username: E-mail ou pseudo
+security.login.submit: Envoyer

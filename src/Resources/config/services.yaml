@@ -9,8 +9,8 @@ services:
 
   WebEtDesign\UserBundle\:
     resource: '../../*'
-    exclude: '../../{DependencyInjection,Entity}'
+    exclude: '../../{DependencyInjection,Entity,Controller/Admin/User,Controller/Azure}'
 
   WebEtDesign\UserBundle\Controller\:
-    resource: '../../Controller'
+    resource: '../../Controller/'
     tags: [ 'controller.service_arguments' ]

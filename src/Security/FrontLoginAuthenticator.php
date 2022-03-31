@@ -28,12 +28,14 @@ class FrontLoginAuthenticator extends AbstractFormLoginAuthenticator implements 
 
     public const LOGIN_ROUTE = 'app_login';
 
-    private EntityManagerInterface             $entityManager;
-    private UrlGeneratorInterface              $urlGenerator;
-    private CsrfTokenManagerInterface          $csrfTokenManager;
-    private UserPasswordEncoderInterface       $passwordEncoder;
-    private RouterInterface                    $router;
-    private ParameterBagInterface              $params;
+    protected EntityManagerInterface             $entityManager;
+    protected UrlGeneratorInterface              $urlGenerator;
+    protected CsrfTokenManagerInterface          $csrfTokenManager;
+    protected UserPasswordEncoderInterface       $passwordEncoder;
+    protected RouterInterface                    $router;
+    protected ParameterBagInterface              $params;
+    
+    protected WDUser|null $user = null;
 
     /**
      * FrontLoginAuthenticator constructor.
@@ -93,6 +95,7 @@ class FrontLoginAuthenticator extends AbstractFormLoginAuthenticator implements 
             throw new UsernameNotFoundException('Username could not be found.');
         }
 
+        $this->user = $user;
         return $user;
     }
 

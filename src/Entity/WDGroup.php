@@ -31,18 +31,18 @@ abstract class WDGroup
      * @var array
      * @ORM\Column(type="json")
      */
-    protected array $roles = [];
+    protected array $permissions = [];
 
     /**
      * Group constructor.
      *
      * @param string $name
-     * @param array $roles
+     * @param array $permissions
      */
-    public function __construct(string $name, array $roles = array())
+    public function __construct(string $name, array $permissions = array())
     {
-        $this->name = $name;
-        $this->roles = $roles;
+        $this->name        = $name;
+        $this->permissions = $permissions;
     }
 
     public function __toString()
@@ -50,10 +50,10 @@ abstract class WDGroup
         return $this->getName();
     }
 
-    public function addRole($role): WDGroup
+    public function addPermission($role): WDGroup
     {
-        if (!$this->hasRole($role)) {
-            $this->roles[] = strtoupper($role);
+        if (!$this->hasPermission($role)) {
+            $this->permissions[] = strtoupper($role);
         }
         return $this;
     }
@@ -68,21 +68,21 @@ abstract class WDGroup
         return $this->name;
     }
 
-    public function hasRole($role): bool
+    public function hasPermission($permission): bool
     {
-        return in_array(strtoupper($role), $this->roles, true);
+        return in_array(strtoupper($permission), $this->permissions, true);
     }
 
-    public function getRoles(): array
+    public function getPermissions(): array
     {
-        return $this->roles;
+        return $this->permissions;
     }
 
-    public function removeRole($role): WDGroup
+    public function removePermission($permission): WDGroup
     {
-        if (false !== $key = array_search(strtoupper($role), $this->roles, true)) {
-            unset($this->roles[$key]);
-            $this->roles = array_values($this->roles);
+        if (false !== $key = array_search(strtoupper($permission), $this->permissions, true)) {
+            unset($this->permissions[$key]);
+            $this->permissions = array_values($this->permissions);
         }
 
         return $this;
@@ -95,9 +95,9 @@ abstract class WDGroup
         return $this;
     }
 
-    public function setRoles(array $roles): WDGroup
+    public function setPermissions(array $permissions): WDGroup
     {
-        $this->roles = $roles;
+        $this->permissions = $permissions;
 
         return $this;
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace  WebEtDesign\UserBundle\Controller\Admin\User;
+namespace WebEtDesign\UserBundle\Controller\Admin\User;
 
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -22,7 +22,7 @@ use WebEtDesign\UserBundle\Security\FrontLoginAuthenticator;
 
 class ResettingController extends BaseCmsController
 {
-    private WDUserRepository               $userRepository;
+    private WDUserRepository             $userRepository;
     private TokenGeneratorInterface      $tokenGenerator;
     private EventDispatcherInterface     $eventDispatcher;
     private UserPasswordEncoderInterface $userPasswordEncoder;
@@ -39,7 +39,7 @@ class ResettingController extends BaseCmsController
         $this->tokenGenerator      = $tokenGenerator;
         $this->eventDispatcher     = $eventDispatcher;
         $this->userPasswordEncoder = $userPasswordEncoder;
-        $this->em = $em;
+        $this->em                  = $em;
     }
 
     /**
@@ -61,10 +61,11 @@ class ResettingController extends BaseCmsController
                 'enabled' => true
             ]);
 
-            if (!$user) {
+            if (!$user || $user->getAzureId() !== null) {
                 $form->addError(new FormError(null, 'user_not_found', [
                     'email' => $form->getData()['email']
                 ]));
+                return $this->redirectToRoute(AdminLoginAuthenticator::LOGIN_ROUTE);
             }
 
             if ($form->isValid()) {
@@ -78,6 +79,9 @@ class ResettingController extends BaseCmsController
 
                 $event = new AdminResettingEvent($user);
                 $this->eventDispatcher->dispatch($event, AdminResettingEvent::NAME);
+
+                $this->addFlash('success',
+                    'Nous venons de vous envoyer un mail pour réinitialiser votre mot de passe.');
 
                 return $this->redirectToRoute(AdminLoginAuthenticator::LOGIN_ROUTE);
             }

@@ -54,7 +54,7 @@ class GroupAdmin extends AbstractAdmin
             ->end()
             ->tab('Sécurité')
             ->with('Roles', ['class' => 'col-md-12'])
-            ->add('roles', SecurityRolesType::class, [
+            ->add('permissions', SecurityRolesType::class, [
                 'expanded' => true,
                 'multiple' => true,
                 'required' => false,
