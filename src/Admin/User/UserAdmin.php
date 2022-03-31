@@ -16,6 +16,7 @@ use Symfony\Component\Form\Event\SubmitEvent;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use WebEtDesign\CmsBundle\Form\Type\SecurityRolesType;
 
@@ -23,23 +24,17 @@ class UserAdmin extends AbstractAdmin
 {
     protected $translationDomain = 'UserAdmin';
 
-    protected UserPasswordEncoderInterface $userPasswordEncoder;
-
     /**
      * UserAdmin constructor.
-     * @param $code
-     * @param $name
-     * @param null $controller
-     * @param UserPasswordEncoderInterface $userPasswordEncoder
+     * @param UserPasswordHasherInterface $userPasswordHasher
      */
     public function __construct(
+        protected UserPasswordHasherInterface $userPasswordHasher,
         $code,
         $name,
         $controller = null,
-        UserPasswordEncoderInterface $userPasswordEncoder
     ) {
         parent::__construct($code, $name, $controller);
-        $this->userPasswordEncoder = $userPasswordEncoder;
     }
 
     /**
@@ -47,8 +42,6 @@ class UserAdmin extends AbstractAdmin
      */
     protected function configureListFields(ListMapper $listMapper): void
     {
-        unset($this->listModes['mosaic']);
-
         $listMapper
             ->addIdentifier('username')
             ->add('email')
@@ -226,8 +219,8 @@ class UserAdmin extends AbstractAdmin
             function (SubmitEvent $event) {
                 $user = $event->getData();
                 if ($user->getPlainPassword()) {
-                    $encoded = $this->userPasswordEncoder->encodePassword($user,
-                        $user->getPlainPassword());
+                    $encoded = $this->userPasswordHasher
+                        ->hashPassword($user, $user->getPlainPassword());
 
                     $user->setPassword($encoded);
                     $user->setLastUpdatePassword(new \DateTime('now'));
@@ -237,12 +230,12 @@ class UserAdmin extends AbstractAdmin
         );
     }
 
-    public function getExportFormats()
+    public function getExportFormats(): array
     {
         return ['csv', 'xls'];
     }
 
-    public function getDataSourceIterator(): SourceIteratorInterface
+    public function getDataSourceIterator(): \Iterator
     {
         $iterator = parent::getDataSourceIterator();
         $iterator->setDateTimeFormat('d/m/Y');

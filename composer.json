@@ -23,7 +23,6 @@
     "doctrine/orm": "^2.6",
     "doctrine/doctrine-bundle": "^1.10|^2",
     "knpuniversity/oauth2-client-bundle": "^2.8",
-    "symfony/console": "^4.4",
     "symfony/dependency-injection": "^5.4",
     "thenetworg/oauth2-azure": "^2.0",
     "webetdesign/wd-rgpd-bundle": "dev-sf5"
