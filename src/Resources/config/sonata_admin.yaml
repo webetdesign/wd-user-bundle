@@ -1,10 +1,14 @@
 services:
   wd.user.admin.user:
     class: WebEtDesign\UserBundle\Admin\User\UserAdmin
-    autowire: true
-    arguments: [ ~, '%wd_user.user.class%', ~]
+    arguments:
+      - ~
+      - '%wd_user.user.class%'
+      - ~
     tags:
       - { name: sonata.admin, manager_type: orm, group: 'Utilisateur', label: Utilisateurs, label_translator_strategy: sonata.admin.label.strategy.underscore, icon: ~, label_catalogue: ~, default: true }
+    calls:
+      - [ setUserPasswordHasher, [ '@security.user_password_hasher' ] ]
     public: true
 
 

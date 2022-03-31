@@ -29,12 +29,12 @@
             {% block login_box_header %}
                 <div class="login-logo">
                     <a href="{{ path('sonata_admin_dashboard') }}">
-                        {% if sonata_admin.adminPool.getOption('title_mode') in ['single_image', 'both'] %}
-                            <div class="d-flex">
-                                <img src="{{ asset(sonata_admin.adminPool.titlelogo) }}" width="100px"
-                                     alt="{{ sonata_admin.adminPool.title }}">
-                            </div>
-                        {% endif %}
+{#                        {% if sonata_admin.adminPool.getOption('title_mode') in ['single_image', 'both'] %}#}
+{#                            <div class="d-flex">#}
+{#                                <img src="{{ asset(sonata_admin.adminPool.titlelogo) }}" width="100px"#}
+{#                                     alt="{{ sonata_admin.adminPool.title }}">#}
+{#                            </div>#}
+{#                        {% endif %}#}
                     </a>
                 </div>
             {% endblock %}
@@ -53,7 +53,6 @@
                     <p class="login-box-msg">{{ 'title_login_wd'|trans }}</p>
 
                     {{ form_start(form) }}
-                    {#                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"> #}
 
                     <div class="form-group has-feedback">
                         {{ form_widget(form.username) }}

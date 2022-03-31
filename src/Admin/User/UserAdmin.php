@@ -22,19 +22,34 @@ use WebEtDesign\CmsBundle\Form\Type\SecurityRolesType;
 
 class UserAdmin extends AbstractAdmin
 {
-    protected $translationDomain = 'UserAdmin';
+    protected                           $translationDomain = 'UserAdmin';
+    private ?UserPasswordHasherInterface $userPasswordHasher = null;
+
+    public function __construct(
+        ?string $code = null,
+        ?string $class = null,
+        ?string $baseControllerName = null
+    )
+    {
+        parent::__construct($code, $class, $baseControllerName);
+    }
 
     /**
-     * UserAdmin constructor.
-     * @param UserPasswordHasherInterface $userPasswordHasher
+     * @param UserPasswordHasherInterface|null $userPasswordHasher
+     * @return UserAdmin
      */
-    public function __construct(
-        protected UserPasswordHasherInterface $userPasswordHasher,
-        $code,
-        $name,
-        $controller = null,
-    ) {
-        parent::__construct($code, $name, $controller);
+    public function setUserPasswordHasher(?UserPasswordHasherInterface $userPasswordHasher
+    ): UserAdmin {
+        $this->userPasswordHasher = $userPasswordHasher;
+        return $this;
+    }
+
+    /**
+     * @return UserPasswordHasherInterface|null
+     */
+    public function getUserPasswordHasher(): ?UserPasswordHasherInterface
+    {
+        return $this->userPasswordHasher;
     }
 
     /**
