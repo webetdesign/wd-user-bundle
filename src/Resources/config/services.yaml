@@ -14,3 +14,21 @@ services:
   WebEtDesign\UserBundle\Controller\:
     resource: '../../Controller/'
     tags: [ 'controller.service_arguments' ]
+
+  # Service Roles User
+  WebEtDesign\UserBundle\Handler\VoterSecurityHandler:
+    arguments:
+      - '@security.authorization_checker'
+      - [ ROLE_SUPER_ADMIN ]
+
+  WebEtDesign\UserBundle\Services\EditableRolesBuilder:
+    arguments:
+      - '@security.token_storage'
+      - '@security.authorization_checker'
+      - '@sonata.admin.pool'
+      - '%security.role_hierarchy.roles%'
+    calls:
+      - [ setTranslator, [ '@translator' ] ]
+
+  sonata.admin.security.handler.role.class:
+    class: WebEtDesign\UserBundle\Handler\VoterSecurityHandler

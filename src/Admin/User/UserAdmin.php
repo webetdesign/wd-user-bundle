@@ -24,7 +24,6 @@ use WebEtDesign\CmsBundle\Form\Type\SecurityRolesType;
 
 class UserAdmin extends AbstractAdmin
 {
-    protected string                     $translationDomain  = 'UserAdmin';
     private ?UserPasswordHasherInterface $userPasswordHasher = null;
 
     public function __construct(

@@ -10,15 +10,10 @@ use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Route\RouteCollectionInterface;
-use WebEtDesign\CmsBundle\Form\Type\SecurityRolesType;
+use WebEtDesign\UserBundle\Form\Type\SecurityRolesType;
 
 class GroupAdmin extends AbstractAdmin
 {
-    protected string $translationDomain = 'GroupAdmin';
-
-    /**
-     * {@inheritdoc}
-     */
     protected array $formOptions = [
         'validation_groups' => 'Registration',
     ];
@@ -47,21 +42,16 @@ class GroupAdmin extends AbstractAdmin
     protected function configureFormFields(FormMapper $form): void
     {
         $form
-            ->tab('Informations')
-            ->with('General', ['class' => 'col-md-6'])
+            ->with('Général', ['class' => 'col-md-3'])
             ->add('name')
             ->end()
-            ->end()
-            ->tab('Sécurité')
-            ->with('Roles', ['class' => 'col-md-12'])
+            ->with('Configuration des permissions', ['class' => 'col-md-9'])
             ->add('permissions', SecurityRolesType::class, [
                 'expanded' => true,
                 'multiple' => true,
                 'required' => false,
             ])
-            ->end()
-            ->end()
-        ;
+            ->end();
     }
     /**
      * {@inheritdoc}
@@ -72,7 +62,15 @@ class GroupAdmin extends AbstractAdmin
 
         $list
             ->addIdentifier('name')
-            ->add('permissions');
+            ->add('permissions', null, [
+                'template' => '@WDUser/admin/CRUD/group/permissions_list_field.html.twig'
+            ])
+            ->add(ListMapper::NAME_ACTIONS, null, [
+                'actions' => [
+                    'edit'   => [],
+                    'delete' => [],
+                ],
+            ]);
     }
 
 

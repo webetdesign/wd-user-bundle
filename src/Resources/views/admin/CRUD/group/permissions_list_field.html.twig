@@ -1,0 +1,13 @@
+<td>
+    {% set l = 4 %}
+    <ul>
+        {% for v in value[:l] %}
+            <li>{{ v }}</li>
+        {% endfor %}
+        {% if value|length > l %}
+            {%- set other -%}{% for v in value[l:] %}{{ v }}
+{% endfor %}{%- endset -%}
+            <li data-toggle="tooltip" data-placement="right" title="{{ other }}">...</li>
+        {% endif %}
+    </ul>
+</td>

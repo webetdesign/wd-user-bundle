@@ -19,6 +19,7 @@ services:
     arguments: [ ~, '%wd_user.group.class%', ~ ]
     calls:
       - [ setTranslationDomain, [ 'GroupAdmin' ] ]
+      - [ setFormTheme, [ ['@@WDUser/admin/CRUD/group/form/roles.html.twig'] ] ]
     tags:
       - { name: sonata.admin, manager_type: orm, group: 'Utilisateur', label: Groupes, label_translator_strategy: sonata.admin.label.strategy.underscore }
     public: true

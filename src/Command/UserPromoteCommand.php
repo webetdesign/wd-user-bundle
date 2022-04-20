@@ -60,7 +60,7 @@ class UserPromoteCommand extends Command
             return 0;
         }
 
-        $user->addRole($role);
+        $user->addPermission($role);
         $this->entityManager->flush();
 
         $io->success('Role ' . $role . ' added to ' . $email . ' user');
