@@ -68,6 +68,21 @@ abstract class WDGroup
         return $this->name;
     }
 
+    public function hasRole($role): bool
+    {
+        return in_array(strtoupper($role), $this->getRoles(), true);
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getRoles(): array
+    {
+        $roles = $this->getPermissions();
+
+        return array_unique($roles);
+    }
+
     public function hasPermission($permission): bool
     {
         return in_array(strtoupper($permission), $this->permissions, true);

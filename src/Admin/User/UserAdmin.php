@@ -10,7 +10,9 @@ use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Form\Type\ModelType;
 use Sonata\DoctrineORMAdminBundle\Datagrid\ProxyQueryInterface;
+use Sonata\DoctrineORMAdminBundle\Filter\BooleanFilter;
 use Sonata\DoctrineORMAdminBundle\Filter\CallbackFilter;
+use Sonata\DoctrineORMAdminBundle\Filter\ChoiceFilter;
 use Sonata\Exporter\Source\SourceIteratorInterface;
 use Symfony\Component\Form\Event\SubmitEvent;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -22,15 +24,14 @@ use WebEtDesign\CmsBundle\Form\Type\SecurityRolesType;
 
 class UserAdmin extends AbstractAdmin
 {
-    protected                           $translationDomain = 'UserAdmin';
+    protected string                     $translationDomain  = 'UserAdmin';
     private ?UserPasswordHasherInterface $userPasswordHasher = null;
 
     public function __construct(
         ?string $code = null,
         ?string $class = null,
         ?string $baseControllerName = null
-    )
-    {
+    ) {
         parent::__construct($code, $class, $baseControllerName);
     }
 
@@ -59,15 +60,19 @@ class UserAdmin extends AbstractAdmin
     {
         $listMapper
             ->addIdentifier('username')
-            ->add('email')
-            ->add('groups')
+            ->add('email');
+        if (property_exists($this->getClass(), 'groups')) {
+            $listMapper
+                ->add('groups');
+        }
+        $listMapper
             ->add('enabled', null, ['editable' => true])
             ->add('createdAt', null, ['format' => 'd/m/Y',]);
 
         $actions = [
             'edit'        => [],
             'impersonate' => [
-                'template' => '@WDUserBundle/Resources/views/admin/CRUD/user/list__action_impersonate.html.twig',
+                'template' => '@WDUser/admin/CRUD/user/list__action_impersonate.html.twig',
             ],
         ];
 
@@ -75,7 +80,7 @@ class UserAdmin extends AbstractAdmin
 
         $listMapper
             ->add(
-                '_action',
+                ListMapper::NAME_ACTIONS,
                 null,
                 [
                     'actions' => $actions,
@@ -97,27 +102,22 @@ class UserAdmin extends AbstractAdmin
                 ]
             );
 
-        $filterMapper
-            ->add(
-                'groups',
-                null,
-                [
-                    'advanced_filter' => false,
-                ]
-            );
+        if (property_exists($this->getClass(), 'groups')) {
+            $filterMapper
+                ->add(
+                    'groups',
+                    null,
+                    [
+                        'advanced_filter' => false,
+                    ]
+                );
+        }
+
 
         $filterMapper
             ->add(
                 'enabled',
-                null,
-                [],
-                ChoiceType::class,
-                [
-                    'choices' => [
-                        'Oui' => true,
-                        'Non' => false,
-                    ],
-                ]
+                BooleanFilter::class,
             )
             ->add(
                 'search',

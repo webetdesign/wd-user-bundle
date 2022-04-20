@@ -72,7 +72,7 @@ class GroupAdmin extends AbstractAdmin
 
         $list
             ->addIdentifier('name')
-            ->add('roles');
+            ->add('permissions');
     }
 
 

@@ -27,7 +27,7 @@ class SecurityController extends AbstractController
     public function login(Request $request): RedirectResponse|Response
     {
 
-        $form = $this->createForm(LoginFormType::class, null);
+        $form = $this->createForm(LoginFormType::class);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()){ // Management of the redirection when entering the email

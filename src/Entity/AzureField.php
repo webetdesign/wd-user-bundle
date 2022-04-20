@@ -2,7 +2,10 @@
 
 namespace WebEtDesign\UserBundle\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use WebEtDesign\RgpdBundle\Annotations\Anonymizer;
+use WebEtDesign\RgpdBundle\Annotations\Exportable;
 
 trait AzureField
 {
