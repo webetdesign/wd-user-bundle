@@ -37,7 +37,7 @@ class SecurityController extends AbstractController
             $clients = $this->parameterBag->get('wd_user.azure_connect.clients');
 
             foreach ($clients as $client){
-                if ($client["domain"] == $domain){ // Si le domaine est celui d'un client azure
+                if ($client["domain"] == $domain || ($client["domain_regex"] !== null && preg_match($client["domain_regex"], $domain) == 1)) {// Si le domaine est celui d'un client azure ou si le domaine match la regex
                     $request->getSession()->set('azure_client', $client["client_name"]); // Stores the name of the client used to retrieve it in the authenticator
                     return $this->clientRegistry->getClient($client["client_name"])->redirect(['openid','email','profile'],["login_hint" => $email]);
                 }

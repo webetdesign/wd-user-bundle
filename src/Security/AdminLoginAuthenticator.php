@@ -224,7 +224,8 @@ class AdminLoginAuthenticator extends SocialAuthenticator
     }
 
     private function getClient(string $name)
-    {                                                                         // Get client by name with session
+    {
+        // Get client by name with session
         $clients = $this->parameterBag->get('wd_user.azure_connect.clients'); //
         $client  = null;
         foreach ($clients as $c) {
