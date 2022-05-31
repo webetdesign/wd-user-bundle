@@ -47,51 +47,35 @@ class VoterSecurityHandler implements SecurityHandlerInterface
      */
     public function isGranted(AdminInterface $admin, $attributes, $object = null): bool
     {
-        if (!\is_array($attributes)) {
+        if (!is_array($attributes)) {
             $attributes = [$attributes];
         }
 
-        $useAll = false;
-        foreach ($attributes as $pos => $attribute) {
-            // If the attribute is not already a ROLE_ we generate the related role.
-            if (!str_starts_with($attribute, 'ROLE_')) {
-                $attributes[$pos] = sprintf($this->getBaseRole($admin), $attribute);
-                // All the admin related role are available when you have the `_ALL` role.
-                $useAll = true;
-            }
+        if ($object === $admin) {
+            $object = $admin->getClass();
         }
 
-        $allRole = sprintf($this->getBaseRole($admin), 'ALL');
-
         try {
-            return $this->isAnyGranted($this->superAdminRoles)
-                || $this->isAnyGranted($attributes, $object)
-                || $useAll && $this->isAnyGranted([$allRole], $object);
+            foreach ($attributes as $attribute) {
+                if (!$this->authorizationChecker->isGranted($attribute, $object)) {
+                    return false;
+                }
+            }
+
+            return true;
         } catch (AuthenticationCredentialsNotFoundException $e) {
             return false;
         }
-
     }
 
     public function getBaseRole(AdminInterface $admin): string
     {
-        return sprintf('ROLE_%s_%%s', str_replace('.', '_', strtoupper($admin->getCode())));
+        return '%s';
     }
 
     public function buildSecurityInformation(AdminInterface $admin): array
     {
         return [];
-    }
-
-    private function isAnyGranted(array $attributes, $subject = null): bool
-    {
-        foreach ($attributes as $attribute) {
-            if ($this->authorizationChecker->isGranted($attribute, $subject)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     public function createObjectSecurity(AdminInterface $admin, object $object): void

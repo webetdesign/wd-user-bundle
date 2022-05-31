@@ -52,12 +52,13 @@ abstract class AbstractAdminVoter implements VoterInterface
     {
         /** @var UserInterface $user */
         $user = $token->getUser();
+
         if ($user && !$user instanceof UserInterface) {
             return VoterInterface::ACCESS_DENIED;
         }
 
         $attribute = $attributes[0];
-
+        
         if (!$this->supportsClass($entity) || !$this->supportsAttribute($attribute)) {
             return VoterInterface::ACCESS_ABSTAIN;
         }
