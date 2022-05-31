@@ -15,7 +15,6 @@ trait AzureField
      * @Anonymizer(type=Anonymizer::TYPE_UNIQ)
      *
      * @ORM\Column(type="string", unique=true, nullable=true)
-     * @Assert\NotBlank(groups={"registration", "editProfile"})
      * @Exportable()
      */
     protected ?string $azureId = null;

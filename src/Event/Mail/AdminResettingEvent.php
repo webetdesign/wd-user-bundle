@@ -4,10 +4,11 @@
 namespace WebEtDesign\UserBundle\Event\Mail;
 
 
-use WebEtDesign\UserBundle\Controller\User\ResettingController;
+use WebEtDesign\MailerBundle\Attribute\MailEvent;
 use Symfony\Contracts\EventDispatcher\Event;
 use WebEtDesign\UserBundle\Entity\WDUser;
 
+#[MailEvent(name: self::NAME, label: 'Mot de passe oublié (admin)')]
 class AdminResettingEvent extends Event
 {
     const NAME = 'ADMIN_RESETTING_EVENT';
