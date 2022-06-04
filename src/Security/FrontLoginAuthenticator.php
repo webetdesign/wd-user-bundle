@@ -2,6 +2,7 @@
 
 namespace WebEtDesign\UserBundle\Security;
 
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -34,7 +35,7 @@ class FrontLoginAuthenticator extends AbstractFormLoginAuthenticator implements 
     protected UserPasswordEncoderInterface       $passwordEncoder;
     protected RouterInterface                    $router;
     protected ParameterBagInterface              $params;
-    
+
     protected WDUser|null $user = null;
 
     /**
@@ -117,6 +118,8 @@ class FrontLoginAuthenticator extends AbstractFormLoginAuthenticator implements 
         TokenInterface $token,
         $providerKey
     ): RedirectResponse {
+        $this->setLastLogin();
+
         if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
             return new RedirectResponse($targetPath);
         }
@@ -127,5 +130,14 @@ class FrontLoginAuthenticator extends AbstractFormLoginAuthenticator implements 
     protected function getLoginUrl(): string
     {
         return $this->urlGenerator->generate(self::LOGIN_ROUTE);
+    }
+
+    protected function setLastLogin()
+    {
+        if ($this->user) {
+            $this->user->setLastLogin(new DateTime());
+            $this->entityManager->persist($this->user);
+            $this->entityManager->flush();
+        }
     }
 }
