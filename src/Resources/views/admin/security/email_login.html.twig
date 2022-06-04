@@ -29,12 +29,10 @@
             {% block login_box_header %}
                 <div class="login-logo">
                     <a href="{{ path('sonata_admin_dashboard') }}">
-{#                        {% if sonata_admin.adminPool.getOption('title_mode') in ['single_image', 'both'] %}#}
-{#                            <div class="d-flex">#}
-{#                                <img src="{{ asset(sonata_admin.adminPool.titlelogo) }}" width="100px"#}
-{#                                     alt="{{ sonata_admin.adminPool.title }}">#}
-{#                            </div>#}
-{#                        {% endif %}#}
+                        <div class="d-flex">
+                            <img src="{{ asset(sonata_config.logo) }}" width="100px"
+                                 alt="{{ sonata_config.title }}">
+                        </div>
                     </a>
                 </div>
             {% endblock %}
@@ -116,12 +114,13 @@
 
     <style>
       .btn-wd {
-        color: white;
+        color            : white;
         background-color : #00abdf;
         border-color     : #00abdf;
       }
+
       .btn-wd:hover {
-        color: white;
+        color            : white;
         background-color : #008eb9;
         border-color     : #008eb9;
       }
