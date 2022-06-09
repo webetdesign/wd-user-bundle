@@ -56,7 +56,7 @@ class SecurityController extends AbstractController
         }
 
         if($form->isSubmitted() && !$form->isValid() && !isset($form->getExtraData()['password'])){ // If the email format is incorrect
-            $this->addFlash("error","Format de l'email incorecte !");
+            $this->addFlash("error","Format de l’e-mail incorrect");
         }
 
         return $this->render('@WDUser/admin/security/email_login.html.twig',[ // Sending the first form
