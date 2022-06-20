@@ -23,7 +23,7 @@ class ResetPasswordPage extends AbstractPage
         return RouteDefinition::new()
             ->setController(ResettingController::class)
             ->setAction('resetting')
-            ->setName(ResettingController::ROUTE_RESETTING_REQUEST)
+            ->setName(ResettingController::ROUTE_RESETTING)
             ->setMethods([
                 Request::METHOD_GET,
                 Request::METHOD_POST,
