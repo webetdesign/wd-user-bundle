@@ -4,21 +4,19 @@
 namespace WebEtDesign\UserBundle\Event\Mail;
 
 
+use Symfony\Component\HttpFoundation\File\File;
+use WebEtDesign\MailerBundle\Attribute\MailEvent;
+use WebEtDesign\MailerBundle\Event\MailEventInterface;
 use WebEtDesign\UserBundle\Controller\User\ResettingController;
 use Symfony\Contracts\EventDispatcher\Event;
 use WebEtDesign\UserBundle\Entity\WDUser;
 
-class ResettingEvent extends Event
+#[MailEvent(name: self::RESETTING_EVENT, label: 'Mot de passe oublié (front)')]
+class ResettingEvent extends Event implements MailEventInterface
 {
-    const NAME = 'RESETTING_EVENT';
+    const RESETTING_EVENT = 'RESETTING_EVENT';
 
-    private WDUser $user;
-
-    private ?string $resetPath = ResettingController::ROUTE_RESETTING;
-
-    public function __construct(WDUser $user) {
-        $this->user = $user;
-    }
+    public function __construct(private WDUser $user, private string $resetPath) {}
 
     public function getEmail(): string
     {
@@ -49,6 +47,10 @@ class ResettingEvent extends Event
     {
         $this->resetPath = $resetPath;
         return $this;
+    }
+
+    public function getFile(): null|array|File{
+        return null;
     }
 
 }

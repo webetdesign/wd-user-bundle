@@ -11,7 +11,7 @@ use WebEtDesign\UserBundle\Controller\User\ResettingController;
 #[AsCmsPage(code: self::CODE)]
 class ResetPasswordRequestPage extends AbstractPage
 {
-    const CODE = 'APP_RESET_PASSWORD_REQUEST';
+    const CODE = ResettingController::ROUTE_RESETTING_REQUEST;
 
     protected ?string $label = 'Demande de réinitialisation de mot de passe';
 

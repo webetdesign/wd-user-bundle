@@ -8,6 +8,7 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -75,8 +76,8 @@ class ResettingController extends BaseCmsController
                 $this->em->persist($user);
                 $this->em->flush();
 
-                $event = new ResettingEvent($user);
-                $this->eventDispatcher->dispatch($event, ResettingEvent::NAME);
+                $event = new ResettingEvent($user, $this->generateUrl(self::ROUTE_RESETTING, ['token' => $user->getConfirmationToken()], UrlGeneratorInterface::ABSOLUTE_URL));
+                $this->eventDispatcher->dispatch($event, ResettingEvent::RESETTING_EVENT);
 
                 $emailSent = true;
             }
@@ -109,7 +110,7 @@ class ResettingController extends BaseCmsController
             $this->userRepository->upgradePassword($user, $encoded);
 
             $this->addFlash('success', 'password_reset_success');
-            return $this->redirectToRoute(FrontLoginAuthenticator::LOGIN_ROUTE);
+            return $this->redirect('/');
         }
 
         return $this->defaultRender([
