@@ -62,9 +62,7 @@ class ResettingController extends BaseCmsController
             ]);
 
             if (!$user) {
-                $form->addError(new FormError(null, 'user_not_found', [
-                    'email' => $form->getData()['email']
-                ]));
+                $form->get('email')->addError(new FormError( 'user_not_found'));
             }
 
             if ($form->isValid()) {
@@ -83,7 +81,6 @@ class ResettingController extends BaseCmsController
             }
 
         }
-
         return $this->defaultRender([
             'form'      => $form->createView(),
             'emailSent' => $emailSent ?? false,
