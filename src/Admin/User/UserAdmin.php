@@ -7,6 +7,7 @@ namespace WebEtDesign\UserBundle\Admin\User;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
+use Sonata\AdminBundle\Filter\Model\FilterData;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Form\Type\ModelType;
 use Sonata\DoctrineORMAdminBundle\Datagrid\ProxyQueryInterface;
@@ -126,18 +127,19 @@ class UserAdmin extends AbstractAdmin
                         ProxyQueryInterface $query,
                         string $alias,
                         string $field,
-                        array $data
+                        FilterData $data
                     ): bool {
-                        if (!$data['value']) {
+                        if (!$data->getValue()) {
                             return false;
                         }
                         $query
                             ->andWhere(
-                                '(' . $alias . '.email like :email or ' . $alias . '.firstname = :firstname or ' . $alias . '.lastname = :lastname)'
+                                '(' . $alias . '.email like :email or ' . $alias . '.username like :username or ' . $alias . '.firstname = :firstname or ' . $alias . '.lastname = :lastname)'
                             )
-                            ->setParameter('email', '%' . $data['value'] . '%')
-                            ->setParameter('firstname', $data['value'])
-                            ->setParameter('lastname', $data['value']);
+                            ->setParameter('email', '%' . $data->getValue() . '%')
+                            ->setParameter('username', '%' . $data->getValue() . '%')
+                            ->setParameter('firstname', $data->getValue())
+                            ->setParameter('lastname', $data->getValue());
 
                         return true;
                     },
