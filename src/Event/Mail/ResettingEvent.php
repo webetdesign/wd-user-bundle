@@ -6,13 +6,13 @@ namespace WebEtDesign\UserBundle\Event\Mail;
 
 use Symfony\Component\HttpFoundation\File\File;
 use WebEtDesign\MailerBundle\Attribute\MailEvent;
-use WebEtDesign\MailerBundle\Event\MailEventInterface;
+use WebEtDesign\MailerBundle\Event\AbstractMailEvent;
 use WebEtDesign\UserBundle\Controller\User\ResettingController;
 use Symfony\Contracts\EventDispatcher\Event;
 use WebEtDesign\UserBundle\Entity\WDUser;
 
 #[MailEvent(name: self::RESETTING_EVENT, label: 'Mot de passe oublié (front)')]
-class ResettingEvent extends Event implements MailEventInterface
+class ResettingEvent extends AbstractMailEvent
 {
     const RESETTING_EVENT = 'RESETTING_EVENT';
 
