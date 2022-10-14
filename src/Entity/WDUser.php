@@ -50,8 +50,8 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
      *
      * @Anonymizer(type=Anonymizer::TYPE_UNIQ)
      *
-     * @ORM\Column(type="string", unique=true)
-     * @Assert\NotBlank(groups={"registration", "editProfile"})
+     * @ORM\Column(type="string", nullable=true)
+     * @Assert\NotBlank(groups={"registration_username", "editProfile_username"})
      * @Exportable()
      */
     protected ?string $username = null;
