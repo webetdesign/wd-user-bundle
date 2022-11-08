@@ -34,7 +34,7 @@ class SecurityController extends AbstractController
         $page = $cmsHelper->retrievePageByRouteName('%login_page');
 
         if ($this->getUser()) {
-            return $this->redirectToRoute('profile');
+            return $this->redirectToRoute($this->parameterBag->get('wd_user.login.success_redirect_route'));
         }
 
         // get the login error if there is one
