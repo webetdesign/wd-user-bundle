@@ -3,7 +3,9 @@
 
 namespace WebEtDesign\UserBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Nette\Utils\Type;
 use WebEtDesign\RgpdBundle\Annotations\Anonymizer;
 use WebEtDesign\RgpdBundle\Annotations\Exportable;
 
@@ -14,6 +16,7 @@ trait AddressFields
      * @Anonymizer()
      * @Exportable(name="address")
      */
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     protected ?string $address = null;
 
     /**
@@ -21,6 +24,7 @@ trait AddressFields
      * @Anonymizer()
      * @Exportable(name="address2")
      */
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     protected ?string $address2 = null;
 
     /**
@@ -28,6 +32,7 @@ trait AddressFields
      * @Anonymizer()
      * @Exportable(name="city")
      */
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     protected ?string $city = null;
 
     /**
@@ -35,6 +40,7 @@ trait AddressFields
      * @Anonymizer()
      * @Exportable(name="zipcode")
      */
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     protected ?string $zipCode = null;
 
     /**
@@ -42,6 +48,8 @@ trait AddressFields
      * @Anonymizer()
      * @Exportable(name="country")
      */
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+
     protected ?string $country = null;
 
     /**

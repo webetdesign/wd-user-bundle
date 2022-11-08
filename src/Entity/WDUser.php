@@ -7,6 +7,7 @@ namespace WebEtDesign\UserBundle\Entity;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use JetBrains\PhpStorm\Pure;
@@ -26,6 +27,7 @@ use WebEtDesign\RgpdBundle\Validator\Constraints\PasswordStrength;
  * @Anonymizable()
  * @Exportable()
  */
+#[ORM\MappedSuperclass]
 abstract class WDUser implements UserInterface, Serializable, JsonSerializable, PasswordAuthenticatedUserInterface
 {
     use IdentityFields;
@@ -43,6 +45,9 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
      *
      * @Exportable()
      */
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: "AUTO")]
     protected ?int $id = null;
 
     /**
@@ -54,6 +59,8 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
      * @Assert\NotBlank(groups={"registration", "editProfile"})
      * @Exportable()
      */
+    #[ORM\Column(type: Types::STRING, unique: true)]
+    #[Assert\NotBlank(groups: ["registration", "editProfile"])]
     protected ?string $username = null;
 
 
@@ -65,41 +72,50 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
      * @Anonymizer(type=Anonymizer::TYPE_EMAIL)
      * @Exportable()
      */
+    #[Assert\NotBlank(groups: ["registration", "editProfile"])]
+    #[Assert\Email(groups: ["registration", "editProfile"])]
+    #[ORM\Column(type: Types::STRING, length: 180, unique: true)]
     protected ?string $email = null;
 
     /**
      * @var null|string The hashed password
      * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: Types::STRING, nullable: true)]
     protected ?string $password = null;
 
     /**
      * @ORM\Column(type="json", nullable=true)
      */
+    #[ORM\Column(type: Types::JSON, nullable: true)]
     protected ?array $permissions = [];
 
     /**
      * @var null|string
      * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: Types::STRING, nullable: true)]
     protected ?string $token = null;
 
     /**
      * @var null|string
      * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: Types::STRING, nullable: true)]
     protected ?string $confirmationToken = null;
 
     /**
      * @var DateTime|null
      * @ORM\Column(type="datetime", nullable=true)
      */
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     protected ?DateTime $passwordRequestedAt = null;
 
     /**
      * @var DateTime|null
      * @ORM\Column(type="date", nullable=true)
      */
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     protected ?DateTime $lastLogin = null;
 
     /**
@@ -108,28 +124,33 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
      * @ORM\Column(type="boolean", options={"default": false})
      * @Anonymizer(type=Anonymizer::TYPE_BOOL_FALSE)
      */
+    #[ORM\Column(type: Types::BOOLEAN, options: ["default" => false])]
     protected bool $enabled = false;
 
     /**
      * @Anonymizer(type=Anonymizer::TYPE_BOOL_FALSE)
      * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
     protected ?bool $newsletter;
 
     /**
      * @Anonymizer(type=Anonymizer::TYPE_DATE)
      * @ORM\Column(type="datetime", nullable=true)
      */
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     protected ?DateTime $newsletterAcceptedAt;
 
     /**
      * @ORM\Column(type="boolean", nullable=false, options={"default"=0})
      */
+    #[ORM\Column(type: Types::BOOLEAN, nullable: false, options: ["default" => 0])]
     protected bool $isBanned = false;
 
     /**
      * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     protected ?string $banReason = null;
 
 
@@ -368,6 +389,7 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
      * @return string|null
      * @PasswordStrength(minStrength=3, groups={"registration", "editProfile"})
      */
+
     public function getPlainPassword(): ?string
     {
         return $this->plainPassword;
