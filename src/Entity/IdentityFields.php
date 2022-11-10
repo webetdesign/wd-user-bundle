@@ -3,6 +3,7 @@
 
 namespace WebEtDesign\UserBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use phpDocumentor\Reflection\Types\Self_;
 use WebEtDesign\RgpdBundle\Annotations\Anonymizer;
@@ -17,6 +18,7 @@ trait IdentityFields
      * @Exportable(name="prenom")
      * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: Types::STRING, nullable: true)]
     protected ?string $firstname = null;
 
     /**
@@ -26,6 +28,7 @@ trait IdentityFields
      * @Exportable(name="nom")
      * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: Types::STRING, nullable: true)]
     protected ?string $lastname = null;
 
     /**
@@ -35,6 +38,7 @@ trait IdentityFields
      * @Exportable(name="gender")
      * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: Types::STRING, nullable: true)]
     protected ?string $gender = null;
 
     /**
@@ -42,6 +46,7 @@ trait IdentityFields
      *
      * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: Types::STRING, nullable: true)]
     protected ?string $locale = null;
 
     /**

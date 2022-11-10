@@ -3,6 +3,7 @@
 
 namespace WebEtDesign\UserBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 abstract class WDGroup
@@ -13,24 +14,30 @@ abstract class WDGroup
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     protected ?int $id = null;
 
     /**
      * @var string
      * @ORM\Column(type="string")
      */
+    #[ORM\Column(type: Types::STRING)]
     protected string $code = '';
 
     /**
      * @var string
      * @ORM\Column(type="string")
      */
+    #[ORM\Column(type: Types::STRING)]
     protected string $name = '';
 
     /**
      * @var array
      * @ORM\Column(type="json")
      */
+    #[ORM\Column(type: Types::JSON)]
     protected array $permissions = [];
 
     /**

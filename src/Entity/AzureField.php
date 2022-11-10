@@ -2,6 +2,7 @@
 
 namespace WebEtDesign\UserBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use WebEtDesign\RgpdBundle\Annotations\Anonymizer;
@@ -17,6 +18,8 @@ trait AzureField
      * @ORM\Column(type="string", unique=true, nullable=true)
      * @Exportable()
      */
+    #[ORM\Column(type: Types::STRING, unique: true, nullable: true)]
+    #[Assert\NotBlank(groups: ["registration", "editProfile"])]
     protected ?string $azureId = null;
 
     /**
