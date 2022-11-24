@@ -258,7 +258,7 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
         return $this->password;
     }
 
-    public function setPassword(string $password): self
+    public function setPassword(?string $password): self
     {
         $this->password = $password;
 
