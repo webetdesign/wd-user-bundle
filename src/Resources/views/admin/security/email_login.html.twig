@@ -40,6 +40,7 @@
             {% endblock %}
             <div class="login-box-body">
                 {% block sonata_user_login_form %}
+                    {{ form_start(form) }}
                     {% for message in app.flashes('success') %}
                         <div class="alert alert-success">
                             {{ message }}
@@ -50,10 +51,18 @@
                             {{ message }}
                         </div>
                     {% endfor %}
+                    {% if form.vars.errors|length > 0 %}
+                        {% for error in form.vars.errors %}
+                            <div class="alert alert-danger alert-error">
+                                {{ error.message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
                     <p class="login-box-msg">{{ 'title_login_wd'|trans }}</p>
 
-                    {{ form_start(form) }}
                     {#                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"> #}
+
 
                     <div class="form-group has-feedback">
                         {{ form_widget(form.username) }}
