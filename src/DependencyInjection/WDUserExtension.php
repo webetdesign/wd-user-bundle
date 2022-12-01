@@ -28,7 +28,7 @@ class WDUserExtension extends Extension
         $loader = new Loader\YamlFileLoader($container,
             new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yaml');
-        
+
         $container->setParameter(
             'wd_user.user.class',
             $config['user']['class']
@@ -52,6 +52,11 @@ class WDUserExtension extends Extension
         $container->setParameter(
             'wd_user.login.success_redirect_route',
             $config['login']['success_redirect_route']
+        );
+
+        $container->setParameter(
+            'wd_user.resetting.success_redirect_route',
+            $config['resetting']['success_redirect_route']
         );
 
         $container->setParameter(
