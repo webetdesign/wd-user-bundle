@@ -4,6 +4,7 @@ namespace  WebEtDesign\UserBundle\Controller\User;
 
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -87,7 +88,7 @@ class ResettingController extends BaseCmsController
         ]);
     }
 
-    public function resetting(Request $request, $token): Response
+    public function resetting(Request $request, ParameterBagInterface $parameterBag, $token): Response
     {
         $user = $this->userRepository->findOneBy(['confirmationToken' => $token]);
 
@@ -107,7 +108,7 @@ class ResettingController extends BaseCmsController
             $this->userRepository->upgradePassword($user, $encoded);
 
             $this->addFlash('success', 'password_reset_success');
-            return $this->redirect('/');
+            return $this->redirectToRoute($parameterBag->get('wd_user.resetting.success_redirect_route'));
         }
 
         return $this->defaultRender([

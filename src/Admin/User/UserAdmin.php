@@ -25,7 +25,7 @@ use WebEtDesign\CmsBundle\Form\Type\SecurityRolesType;
 
 class UserAdmin extends AbstractAdmin
 {
-    private ?UserPasswordHasherInterface $userPasswordHasher = null;
+    protected ?UserPasswordHasherInterface $userPasswordHasher = null;
 
     public function __construct(
         ?string $code = null,
