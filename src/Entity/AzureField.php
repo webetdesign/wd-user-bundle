@@ -19,7 +19,6 @@ trait AzureField
      * @Exportable()
      */
     #[ORM\Column(type: Types::STRING, unique: true, nullable: true)]
-    #[Assert\NotBlank(groups: ["registration", "editProfile"])]
     protected ?string $azureId = null;
 
     /**
