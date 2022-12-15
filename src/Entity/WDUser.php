@@ -527,4 +527,24 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
             $this->email,
         ] = $data;
     }
+
+    public function __serialize(): array
+    {
+        return [
+            $this->password,
+            $this->enabled,
+            $this->id,
+            $this->email,
+        ];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        [
+            $this->password,
+            $this->enabled,
+            $this->id,
+            $this->email,
+        ] = $data;
+    }
 }
