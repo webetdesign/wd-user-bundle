@@ -6,7 +6,7 @@ services:
       - '%wd_user.user.class%'
       - ~
     tags:
-      - { name: sonata.admin, manager_type: orm, group: 'Utilisateur', label: Utilisateurs, label_translator_strategy: sonata.admin.label.strategy.underscore, icon: ~, label_catalogue: ~, default: true }
+      - { name: sonata.admin, manager_type: orm, group: 'Utilisateur', label: Utilisateurs, label_translator_strategy: sonata.admin.label.strategy.underscore, icon: ~, default: true }
     calls:
       - [ setUserPasswordHasher, [ '@security.user_password_hasher' ] ]
       - [ setTranslationDomain, [ 'UserAdmin'] ]

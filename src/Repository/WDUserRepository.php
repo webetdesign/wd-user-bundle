@@ -27,16 +27,16 @@ class WDUserRepository extends ServiceEntityRepository implements PasswordUpgrad
         parent::__construct($registry, $this->class);
     }
 
-    public function upgradePassword(UserInterface $user, string $newEncodedPassword): void
+    public function upgradePassword(UserInterface $user, string $newHashedPassword): void
     {
         // set the new encoded password on the User object
-        $user->setPassword($newEncodedPassword);
+        $user->setPassword($newHashedPassword);
 
         // execute the queries on the database
         $this->getEntityManager()->flush();
     }
 
-    public function loadUserByUsername($usernameOrEmail): ?WDUser
+    public function loadUserByUsername($username): ?WDUser
     {
         $entityManager = $this->getEntityManager();
 
@@ -46,7 +46,7 @@ class WDUserRepository extends ServiceEntityRepository implements PasswordUpgrad
                 WHERE u.username = :query
                 OR u.email = :query'
         )
-            ->setParameter('query', $usernameOrEmail)
+            ->setParameter('query', $username)
             ->getOneOrNullResult();
     }
 
