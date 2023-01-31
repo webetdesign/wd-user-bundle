@@ -25,7 +25,7 @@
     "knpuniversity/oauth2-client-bundle": "^2.8",
     "symfony/dependency-injection": "^5.4",
     "thenetworg/oauth2-azure": "^2.0",
-    "webetdesign/wd-rgpd-bundle": "3.1.*"
+    "webetdesign/wd-rgpd-bundle": "3.1.*||dev-sf6"
   },
   "require-dev": {
     "doctrine/doctrine-fixtures-bundle": "^3.4",
