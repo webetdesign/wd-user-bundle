@@ -3,6 +3,9 @@
 {% block sonata_nav %}
 {% endblock sonata_nav %}
 
+{% block sonata_head_title %}
+{% endblock sonata_head_title %}
+
 {% block logo %}
 {% endblock logo %}
 
@@ -28,8 +31,8 @@
                 <div class="login-logo">
                     <a href="{{ path('sonata_admin_dashboard') }}">
                         <div class="d-flex">
-{#                            <img src="{{ asset(sonata_admin.adminPool.titlelogo) }}"#}
-{#                                 alt="">#}
+                            {#                            <img src="{{ asset(sonata_admin.adminPool.titlelogo) }}" #}
+                            {#                                 alt=""> #}
                         </div>
                     </a>
                 </div>
@@ -44,7 +47,7 @@
                         {% endif %}
                     {% endblock %}
                     <p class="login-box-msg">{{ 'title_wd'|trans({}, 'AdminLogin') }}</p>
-                    <form method="post" role="form">
+                    <form method="post" role="form" action="{{ action|default('') }}">
                         <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
                         <div class="form-group has-feedback">
@@ -58,27 +61,31 @@
                             <span class="glyphicon glyphicon-user form-control-feedback"></span>
                         </div>
 
-                        <div class="form-group has-feedback">
-                            <input class="form-control"
-                                   id="password"
-                                   name="_password"
-                                   placeholder="{{ 'security.login.password'|trans({}, 'AdminLogin') }}"
-                                   required="required"
-                                   type="password"/>
-                            <span class="glyphicon glyphicon-lock form-control-feedback"></span>
-                        </div>
+                        {% if with_password == true %}
+                            <div class="form-group has-feedback">
+                                <input class="form-control"
+                                       id="password"
+                                       name="_password"
+                                       placeholder="{{ 'security.login.password'|trans({}, 'AdminLogin') }}"
+                                       required="required"
+                                       type="password"/>
+                                <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                            </div>
+                        {% endif %}
 
                         <div class="row">
                             <div class="col-xs-12">
                                 <div class="d-flex justify-content-between">
-                                    <div class="d-flex align-items-center">
-                                        <div class="checkbox login-checkbox">
-                                            <label>
-                                                <input type="checkbox" id="remember_me" name="_remember_me" value="on"/>
-                                                {{ 'security.login.remember_me'|trans({}, 'AdminLogin') }}
-                                            </label>
+                                    {% if with_password == true %}
+                                        <div class="d-flex align-items-center">
+                                            <div class="checkbox login-checkbox">
+                                                <label>
+                                                    <input type="checkbox" id="remember_me" name="_remember_me" value="on"/>
+                                                    {{ 'security.login.remember_me'|trans({}, 'AdminLogin') }}
+                                                </label>
+                                            </div>
                                         </div>
-                                    </div>
+                                    {% endif %}
                                     <div class="d-flex align-items-center">
                                         <button type="submit"
                                                 class="btn btn-primary btn-block btn-flat">{{ 'security.login.submit'|trans({}, 'AdminLogin') }}</button>

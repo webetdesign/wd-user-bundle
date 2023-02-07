@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace WebEtDesign\UserBundle\DependencyInjection;
 
@@ -60,7 +61,7 @@ class WDUserExtension extends Extension
         );
 
         $container->setParameter(
-            'wd_user.azure_connect.clients',
+            'wd_user.azure.clients',
             $config['azure_directory']['clients']
         );
 
