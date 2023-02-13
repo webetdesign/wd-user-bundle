@@ -46,11 +46,11 @@
 
                         <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-                        {# <div class="checkbox mb-3"> #}
-                        {# <label> #}
-                        {# <input type="checkbox" name="_remember_me">{{ 'login.form.remember_me.label'|trans({}, 'login') }} #}
-                        {# </label> #}
-                        {# </div> #}
+                         <div class="checkbox mb-3">
+                         <label>
+                         <input type="checkbox" name="_remember_me">{{ 'login.form.remember_me.label'|trans({}, 'login') }}
+                         </label>
+                         </div>
 
                         <div class="mt-60 text-center login__registerlink">
                             {{ 'login.register_phrase'|trans({'%register_url%': cms_path('app_register')},'login')|raw }}

@@ -31,12 +31,15 @@
                 <div class="login-logo">
                     <a href="{{ path('sonata_admin_dashboard') }}">
                         <div class="d-flex">
-                            {#                            <img src="{{ asset(sonata_admin.adminPool.titlelogo) }}" #}
-                            {#                                 alt=""> #}
+                            <div class="d-flex">
+                                <img src="{{ asset(sonata_config.logo) }}" width="100px"
+                                     alt="{{ sonata_config.title }}">
+                            </div>
                         </div>
                     </a>
                 </div>
             {% endblock %}
+
             <div class="login-box-body">
                 {% block sonata_user_login_form %}
                     {% block sonata_user_login_error %}
@@ -87,15 +90,18 @@
                                         </div>
                                     {% endif %}
                                     <div class="d-flex align-items-center">
-                                        <button type="submit"
-                                                class="btn btn-primary btn-block btn-flat">{{ 'security.login.submit'|trans({}, 'AdminLogin') }}</button>
+                                        <button type="submit" class="btn btn-primary btn-block btn-flat">
+                                            {{ 'security.login.submit'|trans({}, 'AdminLogin') }}
+                                        </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </form>
 
-                    <a href="{{ path('admin_reset_password_request') }}">{{ 'forgotten_password'|trans({}, 'AdminLogin') }}</a>
+                    {% if with_password %}
+                        <a href="{{ path('admin_reset_password_request') }}">{{ 'forgotten_password'|trans({}, 'AdminLogin') }}</a>
+                    {% endif %}
                 {% endblock %}
             </div>
         </div>
