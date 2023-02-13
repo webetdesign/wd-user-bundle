@@ -1,0 +1,131 @@
+{% block security_roles_row %}
+    {% set permissions = form.vars['roles'] %}
+    {% set roleCat = null %}
+    {% set otherPermissions = [] %}
+    {% set index = 0 %}
+
+    <div id="admin-list-permissions">
+        <div class="body table-responsive no-padding">
+            <table class="table roles-table">
+                <tr>
+                    <th>{{ 'admin_role'|trans({}, sonata_admin.admin.translationDomain) }}</th>
+                    {% for permission in permissions %}
+                        <th class="text-center rotate">
+                            <div><span>{{ permission|trans({}, 'security') }}</span></div>
+                        </th>
+                    {% endfor %}
+                    {% for child in form.children|filter(child => child.vars.name != '_token') %}
+                    {% if child.vars.value|permission not in permissions %}
+                    {% set otherPermissions = otherPermissions|merge([child]) %}
+                    {% else %}
+                    {% set currentRoleCat = child.vars.value|role %}
+                    {% set currentPermission = child.vars.value|permission %}
+                    {% if currentRoleCat != roleCat %}
+                    {% set roleCat = currentRoleCat %}
+                    {% set index = 0 %}
+                </tr>
+                <tr>
+                    <td>
+                        <span class="line-click" data-role="{{ currentRoleCat }}"
+                              onclick="toggleCheckboxes('{{ currentRoleCat }}')">{{ currentRoleCat|trans({}, 'security_roles') }}</span>
+                    </td>
+                    {% endif %}
+                    {% set permissionIndex = 0 %}
+                    {% for key, elem in permissions %}
+                        {% if currentPermission == elem %}
+                            {% set permissionIndex = key %}
+                        {% endif %}
+                    {% endfor %}
+                    {% if index != permissionIndex %}
+                        {% for v in index..permissionIndex - 1 %}
+                            <td class="text-center {{ permissions[index] }}"></td>
+                            {% set index = index + 1 %}
+                        {% endfor %}
+                    {% endif %}
+                    <td class="text-center {{ currentPermission }}">{{ form_widget(child, { label: false, attr: {class: currentRoleCat } }) }}</td>
+                    {% set index = index + 1 %}
+                    {% endif %}
+                    {% endfor %}
+                </tr>
+            </table>
+
+            {% if otherPermissions is not empty %}
+                <table class="table roles-table">
+                    <tr>
+                        <th>{{ 'application_role'|trans({}, sonata_admin.admin.translationDomain) }}</th>
+                    </tr>
+                    {% for permission in otherPermissions %}
+                        <tr>
+                            <td>
+                                {{ permission.vars.value|trans({}, 'security_roles') }}
+                            </td>
+                            <td>{{ form_widget(permission, { label: false }) }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
+        </div>
+    </div>
+
+    <script type="text/javascript">
+    function toggleCheckboxes(role) {
+        const checkboxes = document.getElementsByClassName(role);
+        for (let checkbox of checkboxes) {
+            if (!checkbox.hasAttribute('disabled')) {
+                checkbox.checked = !checkbox.checked;
+                checkbox.parentNode.classList.toggle('checked');
+            }
+        }
+    }
+
+    function setCheckbox(element, value) {
+        const parentNode = element.parentNode;
+
+        element.checked = value;
+        if (element.checked) {
+            element.setAttribute('disabled', 'disabled');
+            parentNode.classList.add('disabled');
+            parentNode.classList.add('checked');
+        } else {
+            element.removeAttribute('disabled');
+            parentNode.classList.remove('disabled');
+            parentNode.classList.remove('checked');
+        }
+    }
+
+    function setChildren(element) {
+        const children = element.dataset.children;
+        if (children) {
+            const childrenArray = children.split(',');
+            childrenArray.forEach((child) => {
+                const childElement = document.querySelector('input[type="checkbox"][value="' + child + '"]');
+                if (childElement) {
+                    setCheckbox(childElement, element.checked);
+                    childElement.nextElementSibling.dispatchEvent(new Event('click'));
+                }
+
+                const roleCat = document.querySelector('[data-role="' + child + '"]');
+                if (roleCat) {
+                    const checkboxes = document.getElementsByClassName(roleCat.dataset.role);
+                    for (let checkbox of checkboxes) {
+                        setCheckbox(checkbox, element.checked);
+                    }
+                }
+            });
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', (e) => {
+        const listCheckbox = document.getElementById('admin-list-permissions').querySelectorAll('input[type="checkbox"]');
+        listCheckbox.forEach(function (element) {
+            if (element.checked) {
+                setChildren(element);
+            }
+
+            element.nextElementSibling.addEventListener('click', function (event) {
+                setChildren(element);
+            });
+        });
+    });
+    </script>
+{% endblock %}

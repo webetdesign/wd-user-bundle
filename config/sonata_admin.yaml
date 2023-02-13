@@ -1,0 +1,25 @@
+services:
+  wd.user.admin.user:
+    class: WebEtDesign\UserBundle\Admin\User\UserAdmin
+    arguments:
+      - ~
+      - '%wd_user.user.class%'
+      - ~
+    tags:
+      - { name: sonata.admin, manager_type: orm, group: 'Utilisateur', label: Utilisateurs, label_translator_strategy: sonata.admin.label.strategy.underscore, icon: ~, default: true }
+    calls:
+      - [ setUserPasswordHasher, [ '@security.user_password_hasher' ] ]
+      - [ setTranslationDomain, [ 'UserAdmin'] ]
+    public: true
+
+  wd.user.admin.group:
+    class: WebEtDesign\UserBundle\Admin\User\GroupAdmin
+    autowire: true
+    arguments: [ ~, '%wd_user.group.class%', ~ ]
+    calls:
+      - [ setTranslationDomain, [ 'GroupAdmin' ] ]
+      - [ setFormTheme, [ ['@@WDUser/admin/CRUD/group/form/roles.html.twig'] ] ]
+    tags:
+      - { name: sonata.admin, manager_type: orm, group: 'Utilisateur', label: Groupes, label_translator_strategy: sonata.admin.label.strategy.underscore }
+    public: true
+

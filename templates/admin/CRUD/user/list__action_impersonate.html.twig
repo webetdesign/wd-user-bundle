@@ -1,0 +1,9 @@
+{% if object.isEnabled and object.id != app.user.id %}
+    <a
+            href="{{ cms_path('homepage', {_switch_user: object.username }) }}"
+            class="btn btn-sm btn-warning"
+            title="{{ 'action_impersonate'|trans({}, 'UserAdmin') }}"
+    >
+        <i class="fa fa-eye" aria-hidden="true"></i>
+    </a>
+{% endif %}

@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block layout %}
+    <div class="default-layout">
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                {% include 'components/_flash.html.twig' with {
+                    content: message | trans({}, 'flashMessage'),
+                    type: label
+                } %}
+            {% endfor %}
+        {% endfor %}
+
+        {% block content %}
+
+        {% endblock %}
+    </div>
+{% endblock %}
+
