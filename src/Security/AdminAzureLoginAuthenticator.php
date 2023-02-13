@@ -19,7 +19,6 @@ use WebEtDesign\UserBundle\Services\AuthUserHelper;
 
 class AdminAzureLoginAuthenticator extends AbstractAuthenticator
 {
-
     public function __construct(
         protected HttpUtils $httpUtils,
         protected UserProviderInterface $userProvider,
