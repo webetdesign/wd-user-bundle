@@ -6,6 +6,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Doctrine\Security\User\UserLoaderInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use WebEtDesign\UserBundle\Entity\WDUser;
@@ -27,10 +28,10 @@ class WDUserRepository extends ServiceEntityRepository implements PasswordUpgrad
         parent::__construct($registry, $this->class);
     }
 
-    public function upgradePassword(UserInterface $user, string $newHashedPassword): void
+    public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newEncodedPassword): void
     {
         // set the new encoded password on the User object
-        $user->setPassword($newHashedPassword);
+        $user->setPassword($newEncodedPassword);
 
         // execute the queries on the database
         $this->getEntityManager()->flush();
@@ -50,4 +51,23 @@ class WDUserRepository extends ServiceEntityRepository implements PasswordUpgrad
             ->getOneOrNullResult();
     }
 
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function loadUserByIdentifier(string $identifier): ?UserInterface
+    {
+        $qb = $this->createQueryBuilder('u');
+
+        $qb->andWhere(
+            $qb->expr()->orX(
+                $qb->expr()->eq('u.email', ':identifier'),
+                $qb->expr()->eq('u.username', ':identifier'),
+                $qb->expr()->eq('u.azureId', ':identifier'),
+            )
+        );
+
+        $qb->setParameter('identifier', $identifier);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
 }

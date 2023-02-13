@@ -4,92 +4,66 @@ namespace WebEtDesign\UserBundle\Command;
 
 use App\Entity\User\User;
 use Doctrine\ORM\EntityManagerInterface;
+use RuntimeException;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[AsCommand(
+    name: 'user:promote',
+    description: 'Add role to user',
+)]
 class UserPromoteCommand extends Command
 {
-    protected static $defaultName = 'user:promote';
-
-    /**
-     * @var EntityManagerInterface
-     */
-    private EntityManagerInterface $entityManager;
-
-    /**
-     * UserCreateCommand constructor.
-     * @param EntityManagerInterface $entityManager
-     */
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        parent::__construct();
-        $this->entityManager   = $entityManager;
+    public function __construct(
+        protected EntityManagerInterface $em,
+        string $name = null
+    ) {
+        parent::__construct($name);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function configure()
+    protected function configure(): void
     {
         $this
-            ->setDescription('Promote user')
-            ->setDefinition([
-                new InputArgument('email', InputArgument::REQUIRED, 'email'),
-                new InputArgument('role', InputArgument::REQUIRED, 'role'),
-            ]);
+            ->addOption('identifier', null, InputOption::VALUE_OPTIONAL, 'User identifier (email, username)');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
 
-        $email   = $input->getArgument('email');
-        $role   = $input->getArgument('role');
+        $identifier = $input->hasOption('identifier') ? $input->getOption('identifier') : null;
+
+        if (empty($identifier)) {
+            $identifier = $io->ask('Identifier', null, function ($answer) {
+                if (empty($answer)) {
+                    return throw new \RuntimeException('Identifier can not be empty.');
+                }
+                return $answer;
+            });
+        }
 
         /** @var User $user */
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
+        $user = $this->em->getRepository(User::class)->loadUserByIdentifier($identifier);
 
-        if(!$user){
-            $io->error('User ' . $email . " can't be found");
-            return 0;
+        if (null === $user) {
+            $io->error('User not found');
+            return Command::FAILURE;
         }
 
-        $user->addPermission($role);
-        $this->entityManager->flush();
-
-        $io->success('Role ' . $role . ' added to ' . $email . ' user');
-
-        return 0;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function interact(InputInterface $input, OutputInterface $output)
-    {
-        $questions = [];
-        $io = new SymfonyStyle($input, $output);
-
-        $io->comment('Configuration');
-
-        if (!$input->getArgument('email')) {
-            $question = $io->ask('Veuillez saisir le email : ');
-            $questions['email'] = $question;
+        while (!empty($role = $io->ask('Role <fg=yellow>[Empty value to exit]</>'))) {
+            $user->addPermission($role);
         }
 
-        if (!$input->getArgument('role')) {
-            $question = $io->ask('Veuillez saisir le role : ');
-            $questions['role'] = $question;
-        }
+        $this->em->persist($user);
+        $this->em->flush();
 
-        foreach ($questions as $name => $answer) {
-            $input->setArgument($name, $answer);
-        }
+        $io->success("User $user has been updated");
+
+        return Command::SUCCESS;
     }
 }

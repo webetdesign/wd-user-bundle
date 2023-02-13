@@ -4,96 +4,69 @@ namespace WebEtDesign\UserBundle\Command;
 
 use App\Entity\User\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
+#[AsCommand(
+    name: 'user:create',
+    description: 'Create new User',
+)]
 class UserCreateCommand extends Command
 {
-    protected static $defaultName = 'user:create-admin';
-
-    /**
-     * @var UserPasswordEncoderInterface
-     */
-    private UserPasswordEncoderInterface $passwordEncoder;
-
-    /**
-     * @var EntityManagerInterface
-     */
-    private EntityManagerInterface $entityManager;
-
-    /**
-     * UserCreateCommand constructor.
-     * @param UserPasswordEncoderInterface $passwordEncoder
-     * @param EntityManagerInterface $entityManager
-     */
-    public function __construct(UserPasswordEncoderInterface $passwordEncoder, EntityManagerInterface $entityManager)
-    {
-        parent::__construct();
-        $this->passwordEncoder = $passwordEncoder;
-        $this->entityManager   = $entityManager;
+    public function __construct(
+        protected UserPasswordHasherInterface $passwordHasher,
+        protected EntityManagerInterface $em,
+        string $name = null
+    ) {
+        parent::__construct($name);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function configure()
+    protected function configure(): void
     {
         $this
-            ->setDescription('Create admin')
-            ->setDefinition([
-                new InputArgument('email', InputArgument::REQUIRED, 'email'),
-                new InputArgument('password', InputArgument::REQUIRED, 'password'),
-            ]);
+            ->addOption('email', null, InputOption::VALUE_OPTIONAL, 'email')
+            ->addOption('username', null, InputOption::VALUE_OPTIONAL, 'username')
+            ->addOption('password', null, InputOption::VALUE_OPTIONAL, 'password');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
+        $io            = new SymfonyStyle($input, $output);
+        $email         = $input->hasOption('email') ? $input->getOption('email') : null;
+        $username      = $input->hasOption('username') ? $input->getOption('username') : null;
+        $plainPassword = $input->hasOption('password') ? $input->getOption('password') : null;
 
-        $email   = $input->getArgument('email');
-        $password   = $input->getArgument('password');
-
-        $user = new User();
-        $user
-            ->setUsername($email)
-            ->setEmail($email)
-            ->setPermissions(['ROLE_ADMIN'])
-            ->setPassword($this->passwordEncoder->encodePassword($user, $password))
-            ->setEnabled(true);
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
-        $io->success(sprintf('Created user %s', $email));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function interact(InputInterface $input, OutputInterface $output)
-    {
-        $questions = [];
-        $io = new SymfonyStyle($input, $output);
-
-        $io->comment('Configuration');
-
-        if (!$input->getArgument('email')) {
-            $question = $io->ask('Veuillez choisir un email : ');
-            $questions['email'] = $question;
+        if (empty($email)) {
+            $email = $io->ask('Email');
         }
 
-        if (!$input->getArgument('password')) {
-            $question = $io->askHidden('Veuillez choisir un mot de passe : ');
-            $questions['password'] = $question;
+        if (empty($username)) {
+            $username = $io->ask('Username');
         }
 
-        foreach ($questions as $name => $answer) {
-            $input->setArgument($name, $answer);
+        if (empty($plainPassword)) {
+            $plainPassword = $io->ask('Password');
         }
+
+        $user     = new User();
+        $password = $this->passwordHasher->hashPassword($user, $plainPassword);
+
+        $user->setEnabled(true);
+        $user->setEmail($email);
+        $user->setUsername($username);
+        $user->setPassword($password);
+        $user->setNewsletter(false);
+
+        $this->em->persist($user);
+        $this->em->flush();
+
+        $io->success($user . ' has been created');
+
+        return Command::SUCCESS;
     }
 }

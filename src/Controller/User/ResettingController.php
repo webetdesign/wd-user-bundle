@@ -9,6 +9,7 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
@@ -25,25 +26,13 @@ class ResettingController extends BaseCmsController
     const ROUTE_RESETTING_REQUEST = 'reset_password_request';
     const ROUTE_RESETTING = 'reset_password';
 
-    private WDUserRepository               $userRepository;
-    private TokenGeneratorInterface      $tokenGenerator;
-    private EventDispatcherInterface     $eventDispatcher;
-    private UserPasswordEncoderInterface $userPasswordEncoder;
-    private EntityManagerInterface       $em;
-
     public function __construct(
-        EntityManagerInterface $em,
-        WDUserRepository $userRepository,
-        TokenGeneratorInterface $tokenGenerator,
-        EventDispatcherInterface $eventDispatcher,
-        UserPasswordEncoderInterface $userPasswordEncoder
-    ) {
-        $this->userRepository      = $userRepository;
-        $this->tokenGenerator      = $tokenGenerator;
-        $this->eventDispatcher     = $eventDispatcher;
-        $this->userPasswordEncoder = $userPasswordEncoder;
-        $this->em = $em;
-    }
+        private EntityManagerInterface $em,
+        private WDUserRepository $userRepository,
+        private TokenGeneratorInterface $tokenGenerator,
+        private EventDispatcherInterface $eventDispatcher,
+        private UserPasswordHasherInterface $userPasswordHasher
+    ) {}
 
     /**
      * @param Request $request
@@ -101,7 +90,7 @@ class ResettingController extends BaseCmsController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $encoded = $this->userPasswordEncoder->encodePassword($user, $user->getPlainPassword());
+            $encoded = $this->userPasswordHasher->hashPassword($user, $user->getPlainPassword());
 
             $user->eraseCredentials();
             $user->setConfirmationToken(null);
