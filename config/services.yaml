@@ -35,3 +35,19 @@ services:
 
   sonata.admin.security.handler.role.class:
     class: WebEtDesign\UserBundle\Handler\VoterSecurityHandler
+
+  # Sonata admin
+  WebEtDesign\UserBundle\Exporter\ExporterSonataMedia:
+    autowire:      true
+    autoconfigure: true
+
+
+  ################################> Vich <#################################
+  WebEtDesign\RgpdBundle\Exporter\ExporterVich:
+    autowire:      true
+    autoconfigure: true
+
+  WebEtDesign\RgpdBundle\Anonymizer\AnonymizerVich:
+    autowire:      true
+    autoconfigure: true
+  ################################> Vich <#################################
