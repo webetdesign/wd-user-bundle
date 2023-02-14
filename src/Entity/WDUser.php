@@ -159,24 +159,14 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
     /**
      * Get id.
      *
-     * @return int $id
+     * @return int|null $id
      */
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * A visual identifier that represents this user.
-     *
-     * @see UserInterface
-     */
     public function getUsername(): string
-    {
-        return (string)$this->email;
-    }
-
-    public function getUsernameForm(): string
     {
         return (string)$this->username;
     }
