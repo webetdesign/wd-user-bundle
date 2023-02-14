@@ -5,22 +5,17 @@ namespace WebEtDesign\UserBundle\Entity;
 
 
 use DateTime;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
-use JetBrains\PhpStorm\Pure;
 use JsonSerializable;
 use Serializable;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
-use WebEtDesign\RgpdBundle\Annotations\Anonymizable;
-use WebEtDesign\RgpdBundle\Annotations\Anonymizer;
-use WebEtDesign\RgpdBundle\Annotations\Exportable;
-use WebEtDesign\RgpdBundle\Entity\RgpdUserFields;
-use WebEtDesign\RgpdBundle\Validator\Constraints\PasswordStrength;
+use WebEtDesign\UserBundle\Annotations\Anonymizable;
+use WebEtDesign\UserBundle\Annotations\Anonymizer;
+use WebEtDesign\UserBundle\Annotations\Exportable;
 
 /**
  * @ORM\MappedSuperclass()
