@@ -4,7 +4,9 @@
 namespace WebEtDesign\UserBundle\Entity;
 
 
+use App\Entity\User\Group;
 use DateTime;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
@@ -382,9 +384,7 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
 
     /**
      * @return string|null
-     * @PasswordStrength(minStrength=3, groups={"registration", "editProfile"})
      */
-
     public function getPlainPassword(): ?string
     {
         return $this->plainPassword;
