@@ -77,7 +77,7 @@ class LoginAttemptSubscriber implements EventSubscriberInterface
         $maxAttempts = $this->parameterBag->get('wd_user.security.max_attempts');
         $since = new DateTime('now -' . $delay . 'seconds');
 
-        if ($maxAttempts < $this->loginAttemptRepository->countAttemptSince($badge->getIp(), $badge->getUsername(), $since)) {
+        if ($maxAttempts <= $this->loginAttemptRepository->countAttemptSince($badge->getIp(), $badge->getUsername(), $since)) {
             throw new LoginAttemptException();
         }
 
