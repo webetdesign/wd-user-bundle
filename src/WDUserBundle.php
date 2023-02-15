@@ -69,15 +69,15 @@ class WDUserBundle extends AbstractBundle
         $container->parameters()->set(
             'wd_user.old_password_reminder.reset_password_route',
             $config['old_password_reminder']['reset_password_route']
-            );
+        );
         $container->parameters()->set(
-            'wd_user.security.admin_delay',
-            $config['security']['admin_delay']
-            );
+            'wd_user.security.delay',
+            $config['security']['delay']
+        );
         $container->parameters()->set(
-            'wd_user.security.admin_max_attempts',
-            $config['security']['admin_max_attempts']
-            );
+            'wd_user.security.max_attempts',
+            $config['security']['max_attempts']
+        );
         $container->parameters()->set(
             'wd_user.inactivity.duration',
             $config['inactivity']['duration']
@@ -85,7 +85,7 @@ class WDUserBundle extends AbstractBundle
         $container->parameters()->set(
             'wd_user.inactivity.duration_before_anonymization',
             $config['inactivity']['duration_before_anonymization']
-            );
+        );
         $container->parameters()->set(
             'wd_user.inactivity.email_cto_route',
             $config['inactivity']['email_cto_route']
@@ -167,8 +167,8 @@ class WDUserBundle extends AbstractBundle
             ->end()
             ->arrayNode('security')->addDefaultsIfNotSet()
                 ->children()
-                    ->scalarNode('admin_delay')->defaultValue(15)->end()
-                    ->scalarNode('admin_max_attempts')->defaultValue(5)->end()
+                    ->scalarNode('delay')->defaultValue(15)->end()
+                    ->scalarNode('max_attempts')->defaultValue(5)->end()
                 ->end()
             ->end()
             ->append($this->addAzureConfig())

@@ -8,12 +8,6 @@
       "homepage": "https://www.webetdesign.com"
     }
   ],
-  "repositories": [
-    {
-      "type": "git",
-      "url": "https://github.com/webetdesign/wd-rgbd-bundle.git"
-    }
-  ],
   "require": {
     "php": "^7.4|^8.0",
     "ext-json": "*",

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace WebEtDesign\UserBundle\Security;
 
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,7 +12,7 @@ use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
@@ -32,6 +33,7 @@ class AdminFormLoginAuthenticator extends AbstractAuthenticator
         protected HttpUtils $httpUtils,
         protected UserProviderInterface $userProvider,
         protected RouterInterface $router,
+        protected ParameterBagInterface $parameterBag,
         protected array $options = []
     ) {
         $this->options = array_merge([
@@ -108,7 +110,7 @@ class AdminFormLoginAuthenticator extends AbstractAuthenticator
 
         $credentials['username'] = trim($credentials['username']);
 
-        if (\strlen($credentials['username']) > Security::MAX_USERNAME_LENGTH) {
+        if (\strlen($credentials['username']) > UserBadge::MAX_USERNAME_LENGTH) {
             throw new BadCredentialsException('Invalid username.');
         }
 

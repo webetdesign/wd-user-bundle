@@ -3,7 +3,6 @@
 namespace WebEtDesign\UserBundle\Entity;
 
 use DateTime;
-use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use WebEtDesign\UserBundle\Repository\LoginAttemptRepository;
@@ -20,7 +19,7 @@ class LoginAttempt
     #[ORM\Column(type: Types::STRING, length: 50, nullable: true)]
     private ?string $ipAddress;
 
-    #[ORM\Column(type: Types::DATE_IMMUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?DateTime $date;
 
     #[ORM\Column(type: Types::STRING, length: 128, nullable: true)]
@@ -34,7 +33,7 @@ class LoginAttempt
         $this->ipAddress = $ipAddress;
         $this->username = $username;
         $this->firewall = $firewall;
-        $this->date = new DateTimeImmutable('now');
+        $this->date = new DateTime('now');
     }
 
     public function getId(): int
@@ -47,7 +46,7 @@ class LoginAttempt
         return $this->ipAddress;
     }
 
-    public function getDate(): \DateTimeImmutable
+    public function getDate(): \DateTime
     {
         return $this->date;
     }
@@ -69,7 +68,7 @@ class LoginAttempt
         return $this;
     }
 
-    public function setDate(DateTimeImmutable $date): self
+    public function setDate(DateTime $date): self
     {
         $this->date = $date;
 

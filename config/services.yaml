@@ -12,8 +12,6 @@ services:
     exclude:
       - '../Entity'
 
-#  WebEtDesign\UserBundle\Security\AdminFormLoginAuthenticator: ~
-
   WebEtDesign\UserBundle\Controller\:
     resource: '../src/Controller/'
     tags: [ 'controller.service_arguments' ]
@@ -35,3 +33,4 @@ services:
 
   sonata.admin.security.handler.role.class:
     class: WebEtDesign\UserBundle\Handler\VoterSecurityHandler
+
