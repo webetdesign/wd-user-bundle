@@ -15,8 +15,10 @@ title_login_wd: Votre gestionnaire de site web sur-mesure
 
 forgotten_password: 'Mot de passe oublié ?'
 
+security.login.title: Votre gestionnaire de site web sur-mesure
 security.login.email: Votre adresse e-mail
 security.login.password: Mot de passe
 security.login.remember_me: 'Se souvenir de moi'
 security.login.username: E-mail ou pseudo
-security.login.submit: Envoyer
+security.login.submit_next: Suivant
+security.login.submit: Se connecter
