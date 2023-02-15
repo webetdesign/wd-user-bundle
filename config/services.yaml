@@ -10,7 +10,7 @@ services:
   WebEtDesign\UserBundle\:
     resource: '../src'
     exclude:
-      - '../Entity'
+      - '../src/Entity'
 
   WebEtDesign\UserBundle\Controller\:
     resource: '../src/Controller/'
