@@ -13,9 +13,9 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
-use WebEtDesign\RgpdBundle\Annotations\Exportable;
-use WebEtDesign\RgpdBundle\Exporter\ExporterFileInterface;
-use WebEtDesign\RgpdBundle\Utils\LoopGuard;
+use WebEtDesign\UserBundle\Annotations\Exportable;
+use WebEtDesign\UserBundle\Exporter\ExporterFileInterface;
+use WebEtDesign\UserBundle\Utils\LoopGuard;
 use ZipArchive;
 
 class Exporter implements ExporterInterface
@@ -178,7 +178,7 @@ class Exporter implements ExporterInterface
     {
         $uid        = uniqid();
         $archiveDir = $this->container->getParameter('kernel.project_dir') . '/' .
-            $this->container->getParameter('wd_rgpd.export.zip_private_path');
+            $this->container->getParameter('wd_user.export.zip_private_path');
 
         if (!file_exists($archiveDir)) {
             $fs = new Filesystem();

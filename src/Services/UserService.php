@@ -9,7 +9,6 @@ use WebEtDesign\UserBundle\Event\OnCreateUserFromAzureEvent;
 
 class UserService
 {
-
     private string                   $userClass;
     private ParameterBagInterface    $parameterBag;
     private EventDispatcherInterface $eventDispatcher;

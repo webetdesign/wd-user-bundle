@@ -1,0 +1,8 @@
+services:
+  WebEtDesign\UserBundle\Exporter\ExporterVich:
+    autowire:      true
+    autoconfigure: true
+
+  WebEtDesign\UserBundle\Anonymizer\AnonymizerVich:
+    autowire:      true
+    autoconfigure: true

@@ -13,11 +13,11 @@ use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use ReflectionClass;
 use ReflectionProperty;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
-use WebEtDesign\RgpdBundle\Annotations\Anonymizable;
-use WebEtDesign\RgpdBundle\Annotations\Anonymizer as AnonymizerAnnotation;
-use WebEtDesign\RgpdBundle\Anonymizer\AnonymizerFileInterface;
-use WebEtDesign\RgpdBundle\Event\CustomAnonymizeEvent;
-use WebEtDesign\RgpdBundle\Utils\LoopGuard;
+use WebEtDesign\UserBundle\Annotations\Anonymizable;
+use WebEtDesign\UserBundle\Annotations\Anonymizer as AnonymizerAnnotation;
+use WebEtDesign\UserBundle\Anonymizer\AnonymizerFileInterface;
+use WebEtDesign\UserBundle\Event\CustomAnonymizeEvent;
+use WebEtDesign\UserBundle\Utils\LoopGuard;
 
 class Anonymizer implements AnonymizerInterface
 {

@@ -3,7 +3,6 @@
 
 namespace WebEtDesign\UserBundle\Entity;
 
-use DateTime;
 use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;

@@ -8,11 +8,17 @@ use Symfony\Component\Validator\Constraint;
 #[\Attribute]
 class PasswordStrength extends Constraint
 {
-    public string $tooShortMessage = 'password_strength.length.error';
-    public string $message = 'password_strength.sensibility.error';
-    public int $minLength = 6;
-    public ?int $minStrength;
-    public bool $unicodeEquality = false;
+    public function __construct(
+        public string $tooShortMessage = 'password_strength.length.error',
+        public string $message = 'password_strength.sensibility.error',
+        public int $minLength = 6,
+        public ?int $minStrength,
+        public bool $unicodeEquality = false,
+        array $groups = null,
+        mixed $payload = null
+    ) {
+        parent::__construct([], $groups, $payload);
+    }
 
     public function getDefaultOption(): string
     {

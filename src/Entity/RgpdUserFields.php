@@ -15,14 +15,12 @@ trait RgpdUserFields
 {
     use RgpdAnonymizeFields;
 
-    /**
-     * @WDConstraints\PasswordStrength(minLength=6, minStrength=4, groups={"Registration", "Profile", "ResetPassword", "ChangePassword"})
-     */
-    protected $plainPassword; // TODO : Attribute validator
+    #[WDConstraints\PasswordStrength(minLength: 6, minStrength: 4, groups: ['Registration', 'Profile', 'ResetPassword', 'ChangePassword'])]
+    protected $plainPassword;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     #[Gedmo\Timestampable(field: ["password"], on:"change")]
-    #[Gedmo\Timestampable(on:"create")]
+//    #[Gedmo\Timestampable(on:"create")]                       // TODO : Est ce que la date est set au create si commenté ?
     protected ?DateTimeInterface $lastUpdatePassword = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]

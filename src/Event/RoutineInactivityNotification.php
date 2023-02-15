@@ -1,7 +1,7 @@
 <?php
 
 
-namespace WebEtDesign\RgpdBundle\Event;
+namespace WebEtDesign\UserBundle\Event;
 
 use Symfony\Contracts\EventDispatcher\Event;
 use WebEtDesign\MailerBundle\Attribute\MailEvent;

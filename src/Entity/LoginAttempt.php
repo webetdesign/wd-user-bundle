@@ -18,18 +18,18 @@ class LoginAttempt
     private ?int $id = null;
 
     #[ORM\Column(type: Types::STRING, length: 50, nullable: true)]
-    private ?string $ipAddress = null;
+    private ?string $ipAddress;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
-    private ?DateTime $date = null;
+    private ?DateTime $date;
 
     #[ORM\Column(type: Types::STRING, length: 128, nullable: true)]
-    private ?string $username = null;
+    private ?string $username;
 
     #[ORM\Column(type: Types::STRING, length: 128, nullable: true)]
-    private ?string $firewall = null;
+    private ?string $firewall;
 
-    public function __construct(?string $ipAddress, ?string $username, ?string $firewall)
+    public function __construct(?string $ipAddress = null, ?string $username = null, ?string $firewall = null)
     {
         $this->ipAddress = $ipAddress;
         $this->username = $username;

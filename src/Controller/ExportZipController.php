@@ -13,8 +13,7 @@ class ExportZipController extends AbstractController
     #[Route('/rgpd/zip/download/{filename}', name: 'rgpd_zip_download')]
     public function __invoke(Request $request, string $filename): BinaryFileResponse
     {
-        $archiveDir = $this->getParameter('kernel.project_dir') . '/' .
-            $this->getParameter('wd_rgpd.export.zip_private_path');
+        $archiveDir = $this->getParameter('kernel.project_dir') . '/' . $this->getParameter('wd_rgpd.export.zip_private_path');
 
         if (!file_exists($archiveDir . '/' . $filename)) {
             throw new NotFoundHttpException();
