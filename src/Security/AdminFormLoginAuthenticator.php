@@ -23,6 +23,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordCredentials;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\HttpUtils;
+use WebEtDesign\UserBundle\Security\Passport\LoginAttemptBadge;
 
 class AdminFormLoginAuthenticator extends AbstractAuthenticator
 {
@@ -43,7 +44,7 @@ class AdminFormLoginAuthenticator extends AbstractAuthenticator
             'check_path'         => 'admin_login_check',
             'post_only'          => true,
             'form_only'          => false,
-            'enable_csrf'        => false,
+            'enable_csrf'        => true,
             'csrf_parameter'     => '_csrf_token',
             'csrf_token_id'      => 'authenticate',
         ], $options);
@@ -64,6 +65,7 @@ class AdminFormLoginAuthenticator extends AbstractAuthenticator
             new PasswordCredentials($credentials['password']),
             [new RememberMeBadge()]
         );
+
         if ($this->options['enable_csrf']) {
             $passport->addBadge(new CsrfTokenBadge($this->options['csrf_token_id'], $credentials['csrf_token']));
         }
@@ -71,6 +73,8 @@ class AdminFormLoginAuthenticator extends AbstractAuthenticator
         if ($this->userProvider instanceof PasswordUpgraderInterface) {
             $passport->addBadge(new PasswordUpgradeBadge($credentials['password'], $this->userProvider));
         }
+
+        $passport->addBadge(new LoginAttemptBadge($request->getClientIp(), $request->get('_username')));
 
         return $passport;
     }

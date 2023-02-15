@@ -2,6 +2,7 @@
 
 namespace WebEtDesign\UserBundle\Repository;
 
+use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use WebEtDesign\UserBundle\Entity\LoginAttempt;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -59,5 +60,17 @@ class LoginAttemptRepository extends ServiceEntityRepository
         } catch (\Exception $e) {
             throw new $e;
         }
+    }
+
+    public function countAttemptSince(string $ip, string $username, DateTime $since): int
+    {
+        return $this
+            ->createQueryBuilder('la')
+            ->select('count(la.id)')
+            ->where('la.ipAddress = :ipAddress')->setParameter('ipAddress', $ip)
+            ->andWhere('la.username = :username')->setParameter('username', $username)
+            ->andWhere('la.date >= :since')->setParameter('since', $since)
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 }

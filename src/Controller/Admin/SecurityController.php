@@ -34,6 +34,13 @@ class SecurityController extends AbstractController
         $withPassword = false;
         $action       = $router->generate('admin_login');
 
+        if ($this->getUser() !== null) {
+            if ($this->isGranted('ROLE_ADMIN')) {
+                return $this->redirectToRoute('sonata_admin_dashboard');
+            } else {
+                return $this->redirect('/');
+            }
+        }
 
         // first form with email or username are submitted
         if ($request->isMethod('POST')) {
