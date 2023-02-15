@@ -100,7 +100,8 @@
                     </form>
 
                     {% if with_password %}
-                        <a href="{{ path('admin_reset_password_request') }}">{{ 'forgotten_password'|trans({}, 'AdminLogin') }}</a>
+                        {#                        TODO: forget password #}
+                        {#                        <a href="{{ path('admin_reset_password_request') }}">{{ 'forgotten_password'|trans({}, 'AdminLogin') }}</a> #}
                     {% endif %}
                 {% endblock %}
             </div>

@@ -1,8 +1,12 @@
 <?php
 
+
 namespace WebEtDesign\UserBundle\Entity;
 
+
+use App\Entity\User\Group;
 use DateTime;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
@@ -14,6 +18,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use WebEtDesign\UserBundle\Attribute\Anonymizable;
 use WebEtDesign\UserBundle\Attribute\Anonymizer;
 use WebEtDesign\UserBundle\Attribute\Exportable;
+use WebEtDesign\UserBundle\Validator\Constraints\PasswordStrength;
 
 #[Anonymizable]
 #[Exportable]
@@ -88,24 +93,14 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
     /**
      * Get id.
      *
-     * @return int $id
+     * @return int|null $id
      */
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * A visual identifier that represents this user.
-     *
-     * @see UserInterface
-     */
     public function getUsername(): string
-    {
-        return (string)$this->email;
-    }
-
-    public function getUsernameForm(): string
     {
         return (string)$this->username;
     }
@@ -313,9 +308,7 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
 
     /**
      * @return string|null
-     * @PasswordStrength(minStrength=3, groups={"registration", "editProfile"})
      */
-
     public function getPlainPassword(): ?string
     {
         return $this->plainPassword;
