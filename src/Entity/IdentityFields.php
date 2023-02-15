@@ -5,46 +5,26 @@ namespace WebEtDesign\UserBundle\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use WebEtDesign\UserBundle\Annotations\Anonymizer;
-use WebEtDesign\UserBundle\Annotations\Exportable;
+use WebEtDesign\UserBundle\Attribute\Anonymizer;
+use WebEtDesign\UserBundle\Attribute\Exportable;
 
 trait IdentityFields
 {
-    /**
-     * @var ?string
-     *
-     * @Anonymizer()
-     * @Exportable(name="prenom")
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[Exportable(name: 'prenom')]
+    #[Anonymizer()]
     #[ORM\Column(type: Types::STRING, nullable: true)]
     protected ?string $firstname = null;
 
-    /**
-     * @var ?string
-     *
-     * @Anonymizer()
-     * @Exportable(name="nom")
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[Exportable(name: 'nom')]
+    #[Anonymizer()]
     #[ORM\Column(type: Types::STRING, nullable: true)]
     protected ?string $lastname = null;
 
-    /**
-     * @var ?string
-     *
-     * @Anonymizer()
-     * @Exportable(name="gender")
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[Exportable(name: 'gender')]
+    #[Anonymizer()]
     #[ORM\Column(type: Types::STRING, nullable: true)]
     protected ?string $gender = null;
 
-    /**
-     * @var ?string
-     *
-     * @ORM\Column(type="string", nullable=true)
-     */
     #[ORM\Column(type: Types::STRING, nullable: true)]
     protected ?string $locale = null;
 

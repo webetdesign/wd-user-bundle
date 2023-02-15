@@ -1,16 +1,10 @@
 <?php
 
-namespace WebEtDesign\UserBundle\Annotations;
+namespace WebEtDesign\UserBundle\Attribute;
 
-use Exception;
+use Attribute;
 
-/**
- * Class Anonymizer
- * @package WebEtDesign\RgpdBundle\Annotations
- *
- * @Annotation()
- * @Target({"PROPERTY"})
- */
+#[Attribute(Attribute::TARGET_PROPERTY)]
 class Anonymizer
 {
     const TYPE_STRING     = 'TYPE_STRING';
@@ -26,22 +20,12 @@ class Anonymizer
     const ACTION_SET_NULL = 'SET_NULL';
     const ACTION_CASCADE  = 'CASCADE';
 
-    private string  $type;
-    private string  $action;
-    private ?string $service;
-    private ?string $method;
-
-    /**
-     * @inheritDoc
-     * @throws Exception
-     */
-    public function __construct(array $values)
-    {
-        $this->type    = $values['type'] ?? self::TYPE_STRING;
-        $this->action  = $values['action'] ?? self::ACTION_SET_NULL;
-        $this->service = $values['service'] ?? null;
-        $this->method  = $values['method'] ?? null;
-    }
+    public function __construct(
+        public string $type = self::TYPE_STRING,
+        public ?string $action = null,
+        public ?string $service = null,
+        public ?string $method = null
+    ) {}
 
     /**
      * @return string

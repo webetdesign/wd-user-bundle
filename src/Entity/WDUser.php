@@ -15,15 +15,13 @@ use Serializable;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
-use WebEtDesign\UserBundle\Annotations\Anonymizable;
-use WebEtDesign\UserBundle\Annotations\Anonymizer;
-use WebEtDesign\UserBundle\Annotations\Exportable;
+use WebEtDesign\UserBundle\Attribute\Anonymizable;
+use WebEtDesign\UserBundle\Attribute\Anonymizer;
+use WebEtDesign\UserBundle\Attribute\Exportable;
+use WebEtDesign\UserBundle\Validator\Constraints\PasswordStrength;
 
-/**
- * @ORM\MappedSuperclass()
- * @Anonymizable()
- * @Exportable()
- */
+#[Anonymizable]
+#[Exportable]
 #[ORM\MappedSuperclass]
 abstract class WDUser implements UserInterface, Serializable, JsonSerializable, PasswordAuthenticatedUserInterface
 {
@@ -32,124 +30,60 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
     use TimestampableEntity;
     use AzureField;
 
-
-    /**
-     * @var null|int $id
-     *
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")*
-     *
-     * @Exportable()
-     */
+    #[Exportable()]
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: "AUTO")]
     protected ?int $id = null;
 
-    /**
-     * @var ?string
-     *
-     * @Anonymizer(type=Anonymizer::TYPE_UNIQ)
-     *
-     * @ORM\Column(type="string", nullable=true)
-     * @Assert\NotBlank(groups={"registration_username", "editProfile_username"})
-     * @Exportable()
-     */
+    #[Exportable]
+    #[Anonymizer(type: Anonymizer::TYPE_UNIQ)]
     #[ORM\Column(type: Types::STRING, unique: true)]
     #[Assert\NotBlank(groups: ["registration_username", "editProfile_username"])]
     protected ?string $username = null;
 
-
-    /**
-     * @var ?string
-     * @Assert\NotBlank(groups={"registration", "editProfile"})
-     * @Assert\Email (groups={"registration", "editProfile"})
-     * @ORM\Column(type="string", length=180, unique=true)
-     * @Anonymizer(type=Anonymizer::TYPE_EMAIL)
-     * @Exportable()
-     */
+    #[Anonymizer(type: Anonymizer::TYPE_EMAIL)]
+    #[Exportable()]
     #[Assert\NotBlank(groups: ["registration", "editProfile"])]
     #[Assert\Email(groups: ["registration", "editProfile"])]
     #[ORM\Column(type: Types::STRING, length: 180, unique: true)]
     protected ?string $email = null;
 
-    /**
-     * @var null|string The hashed password
-     * @ORM\Column(type="string", nullable=true)
-     */
     #[ORM\Column(type: Types::STRING, nullable: true)]
     protected ?string $password = null;
 
-    /**
-     * @ORM\Column(type="json", nullable=true)
-     */
     #[ORM\Column(type: Types::JSON, nullable: true)]
     protected ?array $permissions = [];
 
-    /**
-     * @var null|string
-     * @ORM\Column(type="string", nullable=true)
-     */
     #[ORM\Column(type: Types::STRING, nullable: true)]
     protected ?string $token = null;
 
-    /**
-     * @var null|string
-     * @ORM\Column(type="string", nullable=true)
-     */
     #[ORM\Column(type: Types::STRING, nullable: true)]
     protected ?string $confirmationToken = null;
 
-    /**
-     * @var DateTime|null
-     * @ORM\Column(type="datetime", nullable=true)
-     */
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     protected ?DateTime $passwordRequestedAt = null;
 
-    /**
-     * @var DateTime|null
-     * @ORM\Column(type="datetime", nullable=true)
-     */
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     protected ?DateTime $lastLogin = null;
 
-    /**
-     * @var bool
-     *
-     * @ORM\Column(type="boolean", options={"default": false})
-     * @Anonymizer(type=Anonymizer::TYPE_BOOL_FALSE)
-     */
+    #[Anonymizer(type: Anonymizer::TYPE_BOOL_FALSE)]
     #[ORM\Column(type: Types::BOOLEAN, options: ["default" => false])]
     protected bool $enabled = false;
 
-    /**
-     * @Anonymizer(type=Anonymizer::TYPE_BOOL_FALSE)
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[Anonymizer(type: Anonymizer::TYPE_BOOL_FALSE)]
     #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
     protected ?bool $newsletter;
 
-    /**
-     * @Anonymizer(type=Anonymizer::TYPE_DATE)
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[Anonymizer(type: Anonymizer::TYPE_DATE)]
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     protected ?DateTime $newsletterAcceptedAt;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=false, options={"default"=0})
-     */
     #[ORM\Column(type: Types::BOOLEAN, nullable: false, options: ["default" => 0])]
     protected bool $isBanned = false;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     protected ?string $banReason = null;
-
 
     public function __toString()
     {

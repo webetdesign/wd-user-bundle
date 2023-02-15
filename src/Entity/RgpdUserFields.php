@@ -8,58 +8,34 @@ use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use WebEtDesign\UserBundle\Validator\Constraints as WDConstraints;
 
 
 trait RgpdUserFields
 {
     use RgpdAnonymizeFields;
 
-    protected ?string $plainPassword = null;
+    #[WDConstraints\PasswordStrength(minLength: 6, minStrength: 4, groups: ['Registration', 'Profile', 'ResetPassword', 'ChangePassword'])]
+    protected $plainPassword;
 
-    /**
-     * @var ?DateTimeInterface $lastUpdatePassword
-     *
-     * @ORM\Column(type="datetime", nullable=true)
-     * @Gedmo\Timestampable(on="create")
-     * @Gedmo\Timestampable(on="change", field={"password"})
-     */
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    #[Gedmo\Timestampable(field: ["password"])]
+    #[Gedmo\Timestampable(field: ["password"], on:"change")]
+//    #[Gedmo\Timestampable(on:"create")]                       // TODO : Est ce que la date est set au create si commenté ?
     protected ?DateTimeInterface $lastUpdatePassword = null;
 
-    /**
-     * @var ?DateTime
-     *
-     * @ORM\Column(type="datetime", nullable=true)
-     */
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     protected ?DateTime $notifyUpdatePasswordAt;
 
-    /**
-     * @var ?DateTime
-     *
-     * @ORM\Column(type="datetime", nullable=true)
-     */
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     protected ?DateTime $notifyInactivityAt;
 
-    /**
-     * @var DateTimeInterface|null $rgpdAcceptedAt
-     *
-     * @ORM\Column(type="datetime", nullable=true)
-     */
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     protected ?DateTimeInterface $rgpdAcceptedAt = null;
 
-    /**
-     * @var DateTimeInterface|null $anonymizedAt
-     *
-     * @ORM\Column(type="datetime", nullable=true)
-     */
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     protected ?DateTimeInterface $anonymizedAt = null;
 
-    public bool $rgpdConfirm = false;
+    public $rgpdConfirm;
 
     public function getLastUpdatePassword(): ?DateTimeInterface
     {
@@ -73,36 +49,22 @@ trait RgpdUserFields
         return $this;
     }
 
-    /**
-     * @return ?DateTime
-     */
     public function getNotifyUpdatePasswordAt(): ?DateTime
     {
         return $this->notifyUpdatePasswordAt;
     }
 
-    /**
-     * @param ?DateTime $notifyUpdatePasswordAt
-     * @return self
-     */
     public function setNotifyUpdatePasswordAt(?DateTime $notifyUpdatePasswordAt): self
     {
         $this->notifyUpdatePasswordAt = $notifyUpdatePasswordAt;
         return $this;
     }
 
-    /**
-     * @return DateTime|null
-     */
     public function getNotifyInactivityAt(): ?DateTime
     {
         return $this->notifyInactivityAt;
     }
 
-    /**
-     * @param DateTime|null $notifyInactivityAt
-     * @return self
-     */
     public function setNotifyInactivityAt(?DateTime $notifyInactivityAt): self
     {
         $this->notifyInactivityAt = $notifyInactivityAt;
@@ -119,5 +81,20 @@ trait RgpdUserFields
         $this->rgpdAcceptedAt = $rgpdAcceptedAt;
 
         return $this;
+    }
+
+    public function getAnonymizedAt(): ?DateTimeInterface
+    {
+        return $this->anonymizedAt;
+    }
+
+    public function setAnonymizedAt(?DateTimeInterface $anonymizedAt): void
+    {
+        $this->anonymizedAt = $anonymizedAt;
+    }
+
+
+    public function isAnonyme(){
+        return $this->getAnonymizedAt() !== null;
     }
 }

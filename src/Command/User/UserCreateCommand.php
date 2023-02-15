@@ -1,6 +1,6 @@
 <?php
 
-namespace WebEtDesign\UserBundle\Command;
+namespace WebEtDesign\UserBundle\Command\User;
 
 use App\Entity\User\User;
 use Doctrine\ORM\EntityManagerInterface;

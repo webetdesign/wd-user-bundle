@@ -5,51 +5,34 @@ namespace WebEtDesign\UserBundle\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Nette\Utils\Type;
-use WebEtDesign\RgpdBundle\Annotations\Anonymizer;
-use WebEtDesign\RgpdBundle\Annotations\Exportable;
+use WebEtDesign\UserBundle\Attribute\Anonymizer;
+use WebEtDesign\UserBundle\Attribute\Exportable;
 
 trait AddressFields
 {
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Anonymizer()
-     * @Exportable(name="address")
-     */
+    #[Exportable(name: 'address')]
+    #[Anonymizer(type: Anonymizer::TYPE_STRING)]
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     protected ?string $address = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Anonymizer()
-     * @Exportable(name="address2")
-     */
+    #[Exportable(name: 'address2')]
+    #[Anonymizer(type: Anonymizer::TYPE_STRING)]
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     protected ?string $address2 = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Anonymizer()
-     * @Exportable(name="city")
-     */
+    #[Exportable(name: 'city')]
+    #[Anonymizer(type: Anonymizer::TYPE_STRING)]
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     protected ?string $city = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Anonymizer()
-     * @Exportable(name="zipcode")
-     */
+    #[Exportable(name: 'zipcode')]
+    #[Anonymizer(type: Anonymizer::TYPE_STRING)]
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     protected ?string $zipCode = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Anonymizer()
-     * @Exportable(name="country")
-     */
+    #[Exportable(name: 'country')]
+    #[Anonymizer(type: Anonymizer::TYPE_STRING)]
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
-
     protected ?string $country = null;
 
     /**
