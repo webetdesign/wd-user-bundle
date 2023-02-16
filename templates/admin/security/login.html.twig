@@ -1,5 +1,5 @@
 {% extends '@SonataAdmin/standard_layout.html.twig' %}
-
+{% trans_default_domain "wd_user" %}
 {% block sonata_nav %}
 {% endblock sonata_nav %}
 
@@ -31,10 +31,8 @@
                 <div class="login-logo">
                     <a href="{{ path('sonata_admin_dashboard') }}">
                         <div class="d-flex">
-                            <div class="d-flex">
-                                <img src="{{ asset(sonata_config.logo) }}" width="100px"
-                                     alt="{{ sonata_config.title }}">
-                            </div>
+                            <img src="{{ asset(sonata_config.logo) }}" width="100px"
+                                 alt="{{ sonata_config.title }}">
                         </div>
                     </a>
                 </div>
@@ -49,7 +47,7 @@
                             </div>
                         {% endif %}
                     {% endblock %}
-                    <p class="login-box-msg">{{ 'title_wd'|trans({}, 'AdminLogin') }}</p>
+                    <p style="margin-bottom: 15px">{{ 'security.login.title'|trans }}</p>
                     <form method="post" role="form" action="{{ action|default('') }}">
                         <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
@@ -57,7 +55,7 @@
                             <input class="form-control"
                                    id="username"
                                    name="_username"
-                                   placeholder="{{ 'security.login.username'|trans({}, 'AdminLogin') }}"
+                                   placeholder="{{ 'security.login.username'|trans }}"
                                    required="required"
                                    type="text"
                                    value="{{ last_username }}"/>
@@ -69,7 +67,7 @@
                                 <input class="form-control"
                                        id="password"
                                        name="_password"
-                                       placeholder="{{ 'security.login.password'|trans({}, 'AdminLogin') }}"
+                                       placeholder="{{ 'security.login.password'|trans }}"
                                        required="required"
                                        type="password"/>
                                 <span class="glyphicon glyphicon-lock form-control-feedback"></span>
@@ -80,18 +78,15 @@
                             <div class="col-xs-12">
                                 <div class="d-flex justify-content-between">
                                     {% if with_password == true %}
-                                        <div class="d-flex align-items-center">
-                                            <div class="checkbox login-checkbox">
-                                                <label>
-                                                    <input type="checkbox" id="remember_me" name="_remember_me" value="on"/>
-                                                    {{ 'security.login.remember_me'|trans({}, 'AdminLogin') }}
-                                                </label>
-                                            </div>
+                                        <div style="margin-bottom: 10px">
+                                            <label>
+                                                <input type="checkbox" id="remember_me" name="_remember_me" value="on"/>
+                                                {{ 'security.login.remember_me'|trans }}
+                                            </label>
                                         </div>
                                     {% endif %}
                                     <div class="d-flex align-items-center">
-                                        <button type="submit" class="btn btn-primary btn-block btn-flat">
-                                            {{ 'security.login.submit'|trans({}, 'AdminLogin') }}
+                                        <button type="submit" class="btn btn-primary btn-block btn-flat">{{ (with_password ? 'security.login.submit' : 'security.login.submit_next') |trans }}
                                         </button>
                                     </div>
                                 </div>
@@ -100,7 +95,8 @@
                     </form>
 
                     {% if with_password %}
-                        <a href="{{ path('admin_reset_password_request') }}">{{ 'forgotten_password'|trans({}, 'AdminLogin') }}</a>
+                        {#                        TODO: forget password #}
+                        {#                        <a href="{{ path('admin_reset_password_request') }}">{{ 'forgotten_password'|trans }}</a> #}
                     {% endif %}
                 {% endblock %}
             </div>

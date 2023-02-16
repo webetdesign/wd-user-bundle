@@ -1,33 +1,20 @@
 <?php
 
-namespace WebEtDesign\UserBundle\Annotations;
+namespace WebEtDesign\UserBundle\Attribute;
 
-use Doctrine\Common\Annotations\Annotation\Target;
+use Attribute;
 
-/**
- * Class Exportable
- * @package WebEtDesign\RgpdBundle\Annotations
- * @Annotation()
- * @Target({"CLASS", "PROPERTY"})
- */
+#[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_CLASS)]
 class Exportable
 {
     const TYPE_DATA          = 'TYPE_DATA';
     const TYPE_SONATA_MEDIA  = 'TYPE_SONATA_MEDIA';
     const TYPE_VICH_UPLOADER = 'TYPE_VICH_UPLOADER';
 
-
-    private string  $type;
-    private ?string $name;
-
-    /**
-     * @inheritDoc
-     */
-    public function __construct(array $values)
-    {
-        $this->type = $values['type'] ?? self::TYPE_DATA;
-        $this->name = $values['name'] ?? null;
-    }
+    public function __construct(
+        public ?string $type = null,
+        public ?string $name = null
+    ) {}
 
     /**
      * @return string|null
@@ -54,6 +41,4 @@ class Exportable
     {
         return $this->type;
     }
-
-
 }

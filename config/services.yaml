@@ -10,9 +10,7 @@ services:
   WebEtDesign\UserBundle\:
     resource: '../src'
     exclude:
-      - '../Entity'
-
-#  WebEtDesign\UserBundle\Security\AdminFormLoginAuthenticator: ~
+      - '../src/Entity'
 
   WebEtDesign\UserBundle\Controller\:
     resource: '../src/Controller/'
@@ -35,3 +33,4 @@ services:
 
   sonata.admin.security.handler.role.class:
     class: WebEtDesign\UserBundle\Handler\VoterSecurityHandler
+

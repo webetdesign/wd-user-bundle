@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace WebEtDesign\UserBundle\Security;
 
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,7 +12,7 @@ use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
@@ -22,6 +23,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordCredentials;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\HttpUtils;
+use WebEtDesign\UserBundle\Security\Passport\LoginAttemptBadge;
 
 class AdminFormLoginAuthenticator extends AbstractAuthenticator
 {
@@ -32,6 +34,7 @@ class AdminFormLoginAuthenticator extends AbstractAuthenticator
         protected HttpUtils $httpUtils,
         protected UserProviderInterface $userProvider,
         protected RouterInterface $router,
+        protected ParameterBagInterface $parameterBag,
         protected array $options = []
     ) {
         $this->options = array_merge([
@@ -41,7 +44,7 @@ class AdminFormLoginAuthenticator extends AbstractAuthenticator
             'check_path'         => 'admin_login_check',
             'post_only'          => true,
             'form_only'          => false,
-            'enable_csrf'        => false,
+            'enable_csrf'        => true,
             'csrf_parameter'     => '_csrf_token',
             'csrf_token_id'      => 'authenticate',
         ], $options);
@@ -62,6 +65,7 @@ class AdminFormLoginAuthenticator extends AbstractAuthenticator
             new PasswordCredentials($credentials['password']),
             [new RememberMeBadge()]
         );
+
         if ($this->options['enable_csrf']) {
             $passport->addBadge(new CsrfTokenBadge($this->options['csrf_token_id'], $credentials['csrf_token']));
         }
@@ -69,6 +73,8 @@ class AdminFormLoginAuthenticator extends AbstractAuthenticator
         if ($this->userProvider instanceof PasswordUpgraderInterface) {
             $passport->addBadge(new PasswordUpgradeBadge($credentials['password'], $this->userProvider));
         }
+
+        $passport->addBadge(new LoginAttemptBadge($request->getClientIp(), $request->get('_username')));
 
         return $passport;
     }
@@ -108,7 +114,7 @@ class AdminFormLoginAuthenticator extends AbstractAuthenticator
 
         $credentials['username'] = trim($credentials['username']);
 
-        if (\strlen($credentials['username']) > Security::MAX_USERNAME_LENGTH) {
+        if (\strlen($credentials['username']) > UserBadge::MAX_USERNAME_LENGTH) {
             throw new BadCredentialsException('Invalid username.');
         }
 
