@@ -60,7 +60,7 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
      * @Exportable()
      */
     #[ORM\Column(type: Types::STRING, unique: true)]
-    #[Assert\NotBlank(groups: ["registration", "editProfile"])]
+    #[Assert\NotBlank(groups: ["registration_username", "editProfile_username"])]
     protected ?string $username = null;
 
 

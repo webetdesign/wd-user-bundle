@@ -8,8 +8,6 @@
         <div class="body table-responsive no-padding">
             <table class="table roles-table">
                 <tr>
-                    {% dump(sonata_admin) %}
-
                     <th>{{ 'admin_role'|trans({}, sonata_admin.admin.translationDomain) }}</th>
                     {% for permission in permissions %}
                         <th class="text-center rotate">
