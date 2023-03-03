@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Created by PhpStorm.
  * User: jvaldena
@@ -20,9 +21,8 @@ class VoterSecurityHandler implements SecurityHandlerInterface
     /**
      * @param string|string[] $superAdminRoles
      */
-    public function __construct(private AuthorizationCheckerInterface $authorizationChecker, private ?array $superAdminRoles = [])
+    public function __construct(private AuthorizationCheckerInterface $authorizationChecker, private null|array|string $superAdminRoles = [])
     {
-
         // NEXT_MAJOR: Keep only the elseif part and add typehint.
         if (\is_array($superAdminRoles)) {
             @trigger_error(sprintf(

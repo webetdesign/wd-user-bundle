@@ -19,8 +19,7 @@ services:
   # Service Roles User
   WebEtDesign\UserBundle\Handler\VoterSecurityHandler:
     arguments:
-      - '@security.authorization_checker'
-      - [ ROLE_SUPER_ADMIN ]
+      $superAdminRoles: 'ROLE_SUPER_ADMIN'
 
   WebEtDesign\UserBundle\Services\EditableRolesBuilder:
     arguments:
@@ -33,4 +32,6 @@ services:
 
   sonata.admin.security.handler.role.class:
     class: WebEtDesign\UserBundle\Handler\VoterSecurityHandler
+    arguments:
+      $superAdminRoles: 'ROLE_SUPER_ADMIN'
 

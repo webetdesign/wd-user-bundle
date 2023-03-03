@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 
 namespace WebEtDesign\UserBundle\Command\Rgpd;
@@ -24,7 +25,7 @@ class CleanLoginAttempts extends Command
         parent::__construct($name);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $delay = $this->params->get('wd_user.security.admin_delay');
 
