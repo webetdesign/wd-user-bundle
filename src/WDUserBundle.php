@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace WebEtDesign\UserBundle;
 
@@ -11,6 +12,7 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 use WebEtDesign\UserBundle\Attribute\Anonymizer;
 use WebEtDesign\UserBundle\Attribute\Exportable;
+use WebEtDesign\UserBundle\Enum\GroupEnum;
 
 /**
  * Class WebEtDesignWDUserBundle
@@ -29,6 +31,10 @@ class WDUserBundle extends AbstractBundle
         $container->parameters()->set(
             'wd_user.group.class',
             $config['group']['class']
+        );
+        $container->parameters()->set(
+            'wd_user.group.enum',
+            $config['group']['enum']
         );
         $container->parameters()->set(
             'wd_user.user.login_path',
@@ -128,6 +134,7 @@ class WDUserBundle extends AbstractBundle
             ->arrayNode('group')->addDefaultsIfNotSet()
                 ->children()
                     ->scalarNode('class')->defaultValue('App\Entity\User\Group')->end()
+                    ->scalarNode('enum')->defaultValue(GroupEnum::class)->end()
                 ->end()
             ->end()
             ->arrayNode('login')->addDefaultsIfNotSet()
@@ -172,22 +179,6 @@ class WDUserBundle extends AbstractBundle
                 ->end()
             ->end()
             ->append($this->addAzureConfig())
-            //                ->arrayNode('azure_directory')
-            //                    ->children()
-            //                        ->arrayNode('clients')
-            //                            ->arrayPrototype()
-            //                                ->addDefaultsIfNotSet()
-            //                                ->children()
-            //                                ->scalarNode('client_name')->defaultValue(null)->end()
-            //                                ->scalarNode('domain')->defaultValue(null)->end()
-            //                                ->scalarNode('domain_regex')->defaultValue(null)->end()
-            //                                ->arrayNode('roles')
-            //                                    ->scalarPrototype()->defaultValue([])->end()
-            //                                ->end()
-            //                            ->end()
-            //                        ->end()
-            //                ->end()
-
         ->end();
     }
 
@@ -199,20 +190,20 @@ class WDUserBundle extends AbstractBundle
         $node
             ->addDefaultsIfNotSet()
             ->children()
-                ->arrayNode('clients')
-                ->defaultValue([])
-                ->arrayPrototype()
-                ->addDefaultsIfNotSet()
-                ->children()
-                    ->booleanNode('enabled')->defaultTrue()->end()
-                    ->scalarNode('client_name')->isRequired()->end()
-                    //->scalarNode('domains')->isRequired()->end()
-                    ->arrayNode('domains')
-                    ->cannotBeEmpty()
-                    ->scalarPrototype()->isRequired()->cannotBeEmpty()->end()
-                ->end()
-                ->arrayNode('roles')
-                    ->scalarPrototype()->defaultValue([])->end()
+                ->arrayNode('clients')->defaultValue([])->arrayPrototype()->addDefaultsIfNotSet()
+                    ->children()
+                        ->booleanNode('enabled')->defaultTrue()->end()
+                        ->scalarNode('client_name')->isRequired()->end()
+                        //->scalarNode('domains')->isRequired()->end()
+                        ->arrayNode('domains')
+                        ->cannotBeEmpty()
+                        ->scalarPrototype()->isRequired()->cannotBeEmpty()->end()
+                    ->end()
+                    ->arrayNode('roles')
+                        ->scalarPrototype()->defaultValue([])->end()
+                    ->end()
+                    ->arrayNode('groups')
+                        ->scalarPrototype()->defaultValue([])->end()
                     ->end()
                     ->end()
                 ->end()

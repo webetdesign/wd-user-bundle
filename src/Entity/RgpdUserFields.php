@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace WebEtDesign\UserBundle\Entity;
 
@@ -10,16 +10,14 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use WebEtDesign\UserBundle\Validator\Constraints as WDConstraints;
 
-
 trait RgpdUserFields
 {
     use RgpdAnonymizeFields;
 
-    #[WDConstraints\PasswordStrength(minLength: 6, minStrength: 4, groups: ['Registration', 'Profile', 'ResetPassword', 'ChangePassword'])]
-    protected $plainPassword;
+    protected ?string $plainPassword = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    #[Gedmo\Timestampable(field: ["password"], on:"change")]
+    #[Gedmo\Timestampable(on: 'change', field: ['password'])]
 //    #[Gedmo\Timestampable(on:"create")]                       // TODO : Est ce que la date est set au create si commenté ?
     protected ?DateTimeInterface $lastUpdatePassword = null;
 
@@ -35,7 +33,21 @@ trait RgpdUserFields
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     protected ?DateTimeInterface $anonymizedAt = null;
 
-    public $rgpdConfirm;
+    public ?bool $rgpdConfirm = false;
+
+    public function setPlainPassword(?string $plainPassword): self
+    {
+        $this->plainPassword = $plainPassword;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
 
     public function getLastUpdatePassword(): ?DateTimeInterface
     {
@@ -88,13 +100,14 @@ trait RgpdUserFields
         return $this->anonymizedAt;
     }
 
+
     public function setAnonymizedAt(?DateTimeInterface $anonymizedAt): void
     {
         $this->anonymizedAt = $anonymizedAt;
     }
 
-
-    public function isAnonyme(){
+    public function isAnonyme(): bool
+    {
         return $this->getAnonymizedAt() !== null;
     }
 }

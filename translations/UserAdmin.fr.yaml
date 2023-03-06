@@ -5,7 +5,10 @@ form.group_utilisateur: Utilisateur
 form.group_sécurité: Sécurité
 form.group_general: General
 form.group_profil: Profil
+form.group_statut: Status
+form.group_groupes: Groupe utilisateur
 form.group_permissions individuelles: Permissions individuelles
+
 
 form.label_username: Pseudo
 form.label_email: Email

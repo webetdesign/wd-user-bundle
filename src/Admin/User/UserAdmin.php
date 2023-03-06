@@ -14,6 +14,7 @@ use Sonata\DoctrineORMAdminBundle\Datagrid\ProxyQueryInterface;
 use Sonata\DoctrineORMAdminBundle\Filter\BooleanFilter;
 use Sonata\DoctrineORMAdminBundle\Filter\CallbackFilter;
 use Symfony\Component\Form\Event\SubmitEvent;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -154,13 +155,14 @@ class UserAdmin extends AbstractAdmin
             ->with('General', ['class' => 'col-md-6'])->end()
             ->with('Profil', ['class' => 'col-md-6'])->end()
             ->end()
-            ->tab('Sécurité')
-            ->with('Permissions individuelles', ['class' => 'col-md-8'])->end()
-            ->with('Statut', ['class' => 'col-md-4'])->end();
+            ->tab('Sécurité');
         if (property_exists($this->getSubject(), 'groups')) {
             $formMapper
-                ->with('Groupes', ['class' => 'col-md-4'])->end();
+                ->with('Groupes', ['class' => 'col-md-8'])->end();
         }
+        $formMapper
+            ->with('Statut', ['class' => 'col-md-4'])->end()
+            ->with('Permissions individuelles', ['class' => 'col-md-4'])->end();
         $formMapper
             ->end();
 
@@ -207,12 +209,14 @@ class UserAdmin extends AbstractAdmin
             ->with('Permissions individuelles')
             ->add(
                 'permissions',
-                SecurityRolesType::class,
+                CollectionType::class,
                 [
-                    'label'    => false,
-                    'expanded' => true,
-                    'multiple' => true,
-                    'required' => false,
+                    'label'        => false,
+                    //                    'expanded' => true,
+                    //                    'multiple' => true,
+                    'allow_add'    => true,
+                    'allow_delete' => true,
+                    'required'     => false,
                 ]
             )
             ->end()

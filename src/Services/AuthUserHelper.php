@@ -8,10 +8,17 @@ use Doctrine\ORM\EntityManagerInterface;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use WebEtDesign\UserBundle\Repository\WDGroupRepository;
 
 class AuthUserHelper
 {
-    public function __construct(protected EntityManagerInterface $em, protected ParameterBagInterface $parameterBag) { }
+    public function __construct(
+        protected EntityManagerInterface $em,
+        protected ParameterBagInterface $parameterBag,
+        protected WDGroupRepository $groupRepository
+    )
+    {
+    }
 
     public function createUserFromAzure(ResourceOwnerInterface $resourceOwner, string $clientName): User
     {
@@ -29,6 +36,14 @@ class AuthUserHelper
             ->setLastname($resourceOwner->getFirstName())
             ->setNewsletter(false)
             ->setPermissions($config['roles']);
+
+        if (!empty($config['groups'])) {
+            $groups = $this->groupRepository->findBy(['code' => $config['groups']]);
+
+            foreach ($groups as $group) {
+                $group->addUser($user);
+            }
+        }
 
         $this->em->persist($user);
         $this->em->flush();
@@ -48,7 +63,7 @@ class AuthUserHelper
 
     protected function getConfig(string $clientName)
     {
-        $clientConfigs = $this->parameterBag->get('smity_user.azure_clients');
+        $clientConfigs = $this->parameterBag->get('wd_user.azure.clients');
 
         foreach ($clientConfigs as $config) {
             if ($config['client_name'] === $clientName) {

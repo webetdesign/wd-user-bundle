@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace WebEtDesign\UserBundle\Entity;
 
@@ -22,7 +22,7 @@ abstract class WDGroup
     #[ORM\Column(type: Types::JSON)]
     protected array $permissions = [];
 
-    public function __construct(string $name, array $permissions = array())
+    public function __construct(string $name, array $permissions = [])
     {
         $this->name        = $name;
         $this->permissions = $permissions;
