@@ -12,7 +12,7 @@ class PasswordStrength extends Constraint
         public string $tooShortMessage = 'password_strength.length.error',
         public string $message = 'password_strength.sensibility.error',
         public int $minLength = 6,
-        public ?int $minStrength,
+        public ?int $minStrength = 3,
         public bool $unicodeEquality = false,
         array $groups = null,
         mixed $payload = null
