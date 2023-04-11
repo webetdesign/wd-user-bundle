@@ -2,6 +2,7 @@
 
 namespace WebEtDesign\UserBundle\Security;
 
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Security\Authenticator\SocialAuthenticator;
@@ -23,8 +24,8 @@ class AdminLoginAuthenticator extends SocialAuthenticator
 {
     use TargetPathTrait;
 
-    public const LOGIN_ROUTE         = 'admin_login';
-    public const AZURE_CONNECT_ROUTE = 'admin_azure_connect';
+    public const LOGIN_ROUTE           = 'admin_login';
+    public const AZURE_CONNECT_ROUTE   = 'admin_azure_connect';
     public const ADMIN_USER_EDIT_ROUTE = 'admin_app_user_user_edit';
 
     protected ClientRegistry               $clientRegistry; // Current client
@@ -129,11 +130,11 @@ class AdminLoginAuthenticator extends SocialAuthenticator
         $azureUser = $this->clientRegistry->getClient($this->client['client_name'])->fetchUserFromToken($credentials);
         $azureId   = $azureUser->toArray()['oid'];
 
-        $existingUser = $this->em->getRepository($this->userClass)
+        $this->user = $this->em->getRepository($this->userClass)
             ->findOneBy(['azureId' => $azureId]);
 
-        if ($existingUser) {
-            return $existingUser;
+        if ($this->user) {
+            return $this->user;
         }
 
         $email = isset($azureUser->toArray()['email']) ? $azureUser->toArray()['email'] : null;
@@ -198,6 +199,9 @@ class AdminLoginAuthenticator extends SocialAuthenticator
         TokenInterface $token,
         $providerKey
     ): RedirectResponse {
+
+        $this->setLastLogin();
+
         $targetPath = $this->getTargetPath($request->getSession(), $providerKey);
 
         if ($this->user && $this->user->getLastUpdatePassword() && !$this->user->getAzureId()) {
@@ -235,5 +239,14 @@ class AdminLoginAuthenticator extends SocialAuthenticator
         }
 
         return $client;
+    }
+
+    protected function setLastLogin()
+    {
+        if ($this->user) {
+            $this->user->setLastLogin(new DateTime());
+            $this->em->persist($this->user);
+            $this->em->flush();
+        }
     }
 }

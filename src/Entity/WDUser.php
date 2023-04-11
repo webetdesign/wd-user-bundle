@@ -97,7 +97,7 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable
 
     /**
      * @var DateTime|null
-     * @ORM\Column(type="date", nullable=true)
+     * @ORM\Column(type="datetime", nullable=true)
      */
     protected ?DateTime $lastLogin = null;
 
