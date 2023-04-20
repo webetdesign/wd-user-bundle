@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 trait UserHasGroupEntityTrait
 {
 
-    #[ORM\ManyToMany(targetEntity: Group::class, inversedBy: 'users')]
+    #[ORM\ManyToMany(targetEntity: Group::class, inversedBy: 'users', cascade: ['persist'])]
     #[ORM\JoinTable(name: 'user__user_has_group')]
     protected Collection|ArrayCollection $groups;
 
