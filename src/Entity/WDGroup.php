@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace WebEtDesign\UserBundle\Entity;
 
@@ -8,45 +8,21 @@ use Doctrine\ORM\Mapping as ORM;
 
 abstract class WDGroup
 {
-    /**
-     * @var null|int $id
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
     protected ?int $id = null;
 
-    /**
-     * @var string
-     * @ORM\Column(type="string")
-     */
     #[ORM\Column(type: Types::STRING)]
     protected string $code = '';
 
-    /**
-     * @var string
-     * @ORM\Column(type="string")
-     */
     #[ORM\Column(type: Types::STRING)]
     protected string $name = '';
 
-    /**
-     * @var array
-     * @ORM\Column(type="json")
-     */
     #[ORM\Column(type: Types::JSON)]
     protected array $permissions = [];
 
-    /**
-     * Group constructor.
-     *
-     * @param string $name
-     * @param array $permissions
-     */
-    public function __construct(string $name, array $permissions = array())
+    public function __construct(string $name, array $permissions = [])
     {
         $this->name        = $name;
         $this->permissions = $permissions;

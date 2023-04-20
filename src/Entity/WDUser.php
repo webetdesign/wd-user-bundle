@@ -1,32 +1,22 @@
 <?php
-
+declare(strict_types=1);
 
 namespace WebEtDesign\UserBundle\Entity;
 
-
 use DateTime;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
-use JetBrains\PhpStorm\Pure;
 use JsonSerializable;
 use Serializable;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Validator\Constraints as Assert;
-use WebEtDesign\RgpdBundle\Annotations\Anonymizable;
-use WebEtDesign\RgpdBundle\Annotations\Anonymizer;
-use WebEtDesign\RgpdBundle\Annotations\Exportable;
-use WebEtDesign\RgpdBundle\Entity\RgpdUserFields;
-use WebEtDesign\RgpdBundle\Validator\Constraints\PasswordStrength;
+use WebEtDesign\UserBundle\Attribute\Anonymizable;
+use WebEtDesign\UserBundle\Attribute\Anonymizer;
+use WebEtDesign\UserBundle\Attribute\Exportable;
 
-/**
- * @ORM\MappedSuperclass()
- * @Anonymizable()
- * @Exportable()
- */
+#[Anonymizable]
+#[Exportable]
 #[ORM\MappedSuperclass]
 abstract class WDUser implements UserInterface, Serializable, JsonSerializable, PasswordAuthenticatedUserInterface
 {
@@ -35,124 +25,57 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
     use TimestampableEntity;
     use AzureField;
 
-
-    /**
-     * @var null|int $id
-     *
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")*
-     *
-     * @Exportable()
-     */
+    #[Exportable()]
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
-    #[ORM\GeneratedValue(strategy: "AUTO")]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     protected ?int $id = null;
 
-    /**
-     * @var ?string
-     *
-     * @Anonymizer(type=Anonymizer::TYPE_UNIQ)
-     *
-     * @ORM\Column(type="string", nullable=true)
-     * @Assert\NotBlank(groups={"registration_username", "editProfile_username"})
-     * @Exportable()
-     */
+    #[Exportable]
+    #[Anonymizer(type: Anonymizer::TYPE_UNIQ)]
     #[ORM\Column(type: Types::STRING, unique: true)]
-    #[Assert\NotBlank(groups: ["registration_username", "editProfile_username"])]
     protected ?string $username = null;
 
-
-    /**
-     * @var ?string
-     * @Assert\NotBlank(groups={"registration", "editProfile"})
-     * @Assert\Email (groups={"registration", "editProfile"})
-     * @ORM\Column(type="string", length=180, unique=true)
-     * @Anonymizer(type=Anonymizer::TYPE_EMAIL)
-     * @Exportable()
-     */
-    #[Assert\NotBlank(groups: ["registration", "editProfile"])]
-    #[Assert\Email(groups: ["registration", "editProfile"])]
+    #[Anonymizer(type: Anonymizer::TYPE_EMAIL)]
+    #[Exportable()]
     #[ORM\Column(type: Types::STRING, length: 180, unique: true)]
     protected ?string $email = null;
 
-    /**
-     * @var null|string The hashed password
-     * @ORM\Column(type="string", nullable=true)
-     */
     #[ORM\Column(type: Types::STRING, nullable: true)]
     protected ?string $password = null;
 
-    /**
-     * @ORM\Column(type="json", nullable=true)
-     */
     #[ORM\Column(type: Types::JSON, nullable: true)]
     protected ?array $permissions = [];
 
-    /**
-     * @var null|string
-     * @ORM\Column(type="string", nullable=true)
-     */
     #[ORM\Column(type: Types::STRING, nullable: true)]
     protected ?string $token = null;
 
-    /**
-     * @var null|string
-     * @ORM\Column(type="string", nullable=true)
-     */
     #[ORM\Column(type: Types::STRING, nullable: true)]
     protected ?string $confirmationToken = null;
 
-    /**
-     * @var DateTime|null
-     * @ORM\Column(type="datetime", nullable=true)
-     */
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     protected ?DateTime $passwordRequestedAt = null;
 
-    /**
-     * @var DateTime|null
-     * @ORM\Column(type="datetime", nullable=true)
-     */
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     protected ?DateTime $lastLogin = null;
 
-    /**
-     * @var bool
-     *
-     * @ORM\Column(type="boolean", options={"default": false})
-     * @Anonymizer(type=Anonymizer::TYPE_BOOL_FALSE)
-     */
-    #[ORM\Column(type: Types::BOOLEAN, options: ["default" => false])]
+    #[Anonymizer(type: Anonymizer::TYPE_BOOL_FALSE)]
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
     protected bool $enabled = false;
 
-    /**
-     * @Anonymizer(type=Anonymizer::TYPE_BOOL_FALSE)
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[Anonymizer(type: Anonymizer::TYPE_BOOL_FALSE)]
     #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
     protected ?bool $newsletter;
 
-    /**
-     * @Anonymizer(type=Anonymizer::TYPE_DATE)
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[Anonymizer(type: Anonymizer::TYPE_DATE)]
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     protected ?DateTime $newsletterAcceptedAt;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=false, options={"default"=0})
-     */
-    #[ORM\Column(type: Types::BOOLEAN, nullable: false, options: ["default" => 0])]
+    #[ORM\Column(type: Types::BOOLEAN, nullable: false, options: ['default' => 0])]
     protected bool $isBanned = false;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     protected ?string $banReason = null;
-
 
     public function __toString()
     {
@@ -162,24 +85,14 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
     /**
      * Get id.
      *
-     * @return int $id
+     * @return int|null $id
      */
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * A visual identifier that represents this user.
-     *
-     * @see UserInterface
-     */
     public function getUsername(): string
-    {
-        return (string)$this->email;
-    }
-
-    public function getUsernameForm(): string
     {
         return (string)$this->username;
     }
@@ -238,16 +151,6 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
     public function hasRole($role): bool
     {
         return in_array(strtoupper($role), $this->getRoles(), true);
-    }
-
-    /**
-     * @see UserInterface
-     */
-    public function getRoles(): array
-    {
-        $roles = $this->getPermissions();
-
-        return array_unique($roles);
     }
 
     /**
@@ -316,6 +219,7 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
 
     /**
      * @param bool|null $newsletter
+     * @return WDUser
      */
     public function setNewsletter(?bool $newsletter): self
     {
@@ -372,27 +276,6 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
     public function getToken(): ?string
     {
         return $this->token;
-    }
-
-    /**
-     * @param string $plainPassword
-     * @return WDUser
-     */
-    public function setPlainPassword(?string $plainPassword): WDUser
-    {
-        $this->plainPassword = $plainPassword;
-
-        return $this;
-    }
-
-    /**
-     * @return string|null
-     * @PasswordStrength(minStrength=3, groups={"registration", "editProfile"})
-     */
-
-    public function getPlainPassword(): ?string
-    {
-        return $this->plainPassword;
     }
 
     /**

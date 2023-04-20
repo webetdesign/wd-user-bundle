@@ -1,0 +1,24 @@
+password_request: Demande de réinitialisation
+password_reset: Réinitialisation du mot de passe
+
+form.request.email.placeholder: Email
+form.request.submit.label: Valider
+
+form.resetting.new_password.label: Nouveau mot de passe
+form.resetting.new_password.placeholder: Nouveau mot de passe
+form.resetting.new_password_confirmation.label: Confirmation
+form.resetting.new_password_confirmation.placeholder: Confirmation
+form.resetting.submit.label: Enregistrer
+
+
+title_login_wd: Votre gestionnaire de site web sur-mesure
+
+forgotten_password: 'Mot de passe oublié ?'
+
+security.login.title: Votre gestionnaire de site web sur-mesure
+security.login.email: Votre adresse e-mail
+security.login.password: Mot de passe
+security.login.remember_me: 'Se souvenir de moi'
+security.login.username: E-mail ou pseudo
+security.login.submit_next: Suivant
+security.login.submit: Se connecter

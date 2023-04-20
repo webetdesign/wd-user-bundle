@@ -1,0 +1,66 @@
+{% extends 'layout/default_layout.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {% for file in encore_entry_css_files('security') %}
+        <link rel="stylesheet" href="{{ preload(file, { as: 'style', importance: 'high' }) }}">
+    {% endfor %}
+{% endblock %}
+
+{% block content %}
+    <div class="login my-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 col-xl-5 mx-auto text-center">
+                    <div class="d-block mb-30">
+                        <img src="{{ asset("build/images/default-logo.svg") }}" alt="Logo" height="50px">
+                    </div>
+                    <h1 class="page-title mb-50">
+                        {{ 'login.page_title'|trans({}, 'login') }}
+                    </h1>
+                    <form method="post" class="mb-100">
+                        {% if error %}
+                            <div class="alert alert-danger my-3">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                        {% endif %}
+                        <div class="form-floating">
+                            <input type="text" placeholder="{{ 'login.form.username.label'|trans({}, 'login') }}"
+                                   value="{{ last_username }}" name="username" id="inputUsername"
+                                   class="form-control" autocomplete="username" required autofocus>
+                            <label for="inputUsername">{{ 'login.form.username.label'|trans({}, 'login') }}</label>
+                        </div>
+                        <div class="form-floating js-pwdRow">
+                            <span class="js-togglePwdVisibility"></span>
+                            <input type="password" placeholder="{{ 'login.form.password.label'|trans({}, 'login') }}"
+                                   name="password" id="inputPassword"
+                                   class="form-control" autocomplete="current-password" required>
+                            <label for="inputPassword">{{ 'login.form.password.label'|trans({}, 'login') }}</label>
+                        </div>
+                        <div class="text-center">
+                            <div class="my-3">
+                                {{ 'login.resetting_request'|trans({'%reset_url%': cms_path(constant('App\\Controller\\User\\ResettingController::ROUTE_RESETTING_REQUEST'))},'login')|raw }}
+                            </div>
+                            <button class="btn btn-primary" type="submit">
+                                {{ 'login.form.submit.label'|trans({}, 'login')|raw }}
+                            </button>
+                        </div>
+
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                         <div class="checkbox mb-3">
+                         <label>
+                         <input type="checkbox" name="_remember_me">{{ 'login.form.remember_me.label'|trans({}, 'login') }}
+                         </label>
+                         </div>
+
+                        <div class="mt-60 text-center login__registerlink">
+                            {{ 'login.register_phrase'|trans({'%register_url%': cms_path('app_register')},'login')|raw }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock %}

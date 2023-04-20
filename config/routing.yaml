@@ -1,0 +1,13 @@
+wd_user.controller:
+  resource: '../src/Controller/'
+  type: attribute
+
+#app_login:
+#  path: '%wd_user.user.login_path%'
+#  # the controller value has the format 'controller_class::method_name'
+#  controller: WebEtDesign\UserBundle\Controller\User\SecurityController::login
+#
+#app_logout:
+#  path: '%wd_user.user.logout_path%'
+#  # the controller value has the format 'controller_class::method_name'
+#  controller: WebEtDesign\UserBundle\Controller\User\SecurityController::logout
