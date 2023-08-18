@@ -1,11 +1,8 @@
 <?php
 
-
 namespace WebEtDesign\UserBundle\Services\Anonymizer;
 
-
 use DateTime;
-use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Inflector\InflectorFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
@@ -13,18 +10,14 @@ use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use ReflectionClass;
 use ReflectionProperty;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
-use WebEtDesign\UserBundle\Annotations\Anonymizable;
-use WebEtDesign\UserBundle\Annotations\Anonymizer as AnonymizerAnnotation;
 use WebEtDesign\UserBundle\Anonymizer\AnonymizerFileInterface;
+use WebEtDesign\UserBundle\Attribute\Anonymizable;
+use WebEtDesign\UserBundle\Attribute\Anonymizer as AnonymizerAttribute;
 use WebEtDesign\UserBundle\Event\CustomAnonymizeEvent;
 use WebEtDesign\UserBundle\Utils\LoopGuard;
 
 class Anonymizer implements AnonymizerInterface
 {
-    /**
-     * @var AnnotationReader
-     */
-    protected AnnotationReader $reader;
     /**
      * @var EntityManagerInterface
      */
@@ -42,19 +35,15 @@ class Anonymizer implements AnonymizerInterface
      */
     private array $anonymizer = [];
 
-    /**
-     * @inheritDoc
-     */
     public function __construct(
-        EntityManagerInterface $em,
+        EntityManagerInterface   $em,
         EventDispatcherInterface $eventDispatcher
-    ) {
-        $this->reader          = new AnnotationReader();
+    )
+    {
         $this->em              = $em;
         $this->loopGuard       = new LoopGuard();
         $this->eventDispatcher = $eventDispatcher;
     }
-
 
     /**
      * @throws \Doctrine\ORM\Mapping\MappingException
@@ -71,20 +60,23 @@ class Anonymizer implements AnonymizerInterface
             $reflectionClass = $metadata->getReflectionClass();
 
             foreach ($reflectionClass->getProperties() as $property) {
-                /** @var AnonymizerAnnotation $annotation */
-                if (($annotation = $this->reader->getPropertyAnnotation($property,
-                    AnonymizerAnnotation::class))) {
-                    if ($annotation->getType() === AnonymizerAnnotation::TYPE_CUSTOM) {
-                        $this->doCustomAnonymize($object, $property, $metadata);
-                    } else {
-                        if ($metadata->hasField($property->getName()) || $annotation->getType() === AnonymizerAnnotation::TYPE_VICH) {
-                            $this->doAnonimize($object, $property, $annotation);
-                        }
+                $attributes = $property->getAttributes(AnonymizerAttribute::class);
+                if (empty($attributes)) {
+                    continue;
+                }
 
-                        if ($metadata->hasAssociation($property->getName())) {
-                            $this->doAssociationAnonimize($object, $property, $annotation,
-                                $metadata);
-                        }
+                /** @var AnonymizerAttribute $attribute */
+                $attribute = $attributes[0]->newInstance();
+
+                if ($attribute->getType() === AnonymizerAttribute::TYPE_CUSTOM) {
+                    $this->doCustomAnonymize($object, $property, $metadata);
+                } else {
+                    if ($metadata->hasField($property->getName()) || $attribute->getType() === AnonymizerAttribute::TYPE_VICH) {
+                        $this->doAnonimize($object, $property, $attribute);
+                    }
+
+                    if ($metadata->hasAssociation($property->getName())) {
+                        $this->doAssociationAnonimize($object, $property, $attribute, $metadata);
                     }
                 }
             }
@@ -98,37 +90,38 @@ class Anonymizer implements AnonymizerInterface
     private function doAnonimize(
         $object,
         ReflectionProperty $property,
-        AnonymizerAnnotation $annotation
-    ) {
+        AnonymizerAttribute $attribute
+    )
+    {
         $setter       = 'set' . ucfirst($property->getName());
         $propertyName = $property->getName();
-        switch ($annotation->getType()) {
-            case AnonymizerAnnotation::TYPE_BOOL_TRUE:
+        switch ($attribute->getType()) {
+            case AnonymizerAttribute::TYPE_BOOL_TRUE:
                 $value = true;
                 break;
-            case AnonymizerAnnotation::TYPE_BOOL_FALSE:
+            case AnonymizerAttribute::TYPE_BOOL_FALSE:
                 $value = false;
                 break;
-            case AnonymizerAnnotation::TYPE_NULL:
+            case AnonymizerAttribute::TYPE_NULL:
                 $value = null;
                 break;
-            case AnonymizerAnnotation::TYPE_DATE:
+            case AnonymizerAttribute::TYPE_DATE:
                 $value = new DateTime('now');
                 break;
-            case AnonymizerAnnotation::TYPE_EMAIL:
+            case AnonymizerAttribute::TYPE_EMAIL:
                 $value = 'anonymous-' . uniqid() . '@null.com';
                 break;
-            case AnonymizerAnnotation::TYPE_UNIQ:
+            case AnonymizerAttribute::TYPE_UNIQ:
                 $value = 'anonymous-' . uniqid();
                 break;
-            case AnonymizerAnnotation::TYPE_VICH:
-                $anonymizer = $this->getAnonymizer(AnonymizerAnnotation::TYPE_VICH);
+            case AnonymizerAttribute::TYPE_VICH:
+                $anonymizer = $this->getAnonymizer(AnonymizerAttribute::TYPE_VICH);
                 if ($anonymizer) {
                     $object = $anonymizer->doAnonymize($object, $property);
                 }
                 $value = null;
                 break;
-            case AnonymizerAnnotation::TYPE_STRING:
+            case AnonymizerAttribute::TYPE_STRING:
             default:
                 $value = 'anonymous';
                 break;
@@ -142,15 +135,16 @@ class Anonymizer implements AnonymizerInterface
     }
 
     private function doAssociationAnonimize(
-        $object,
-        ReflectionProperty $property,
-        AnonymizerAnnotation $annotation,
-        ClassMetadata $metadata
-    ) {
+                            $object,
+        ReflectionProperty  $property,
+        AnonymizerAttribute $attribute,
+        ClassMetadata       $metadata
+    )
+    {
         $inflector = InflectorFactory::create()->build();
 
         $mapping = $metadata->getAssociationMapping($property->getName());
-        if ($annotation->getAction() === AnonymizerAnnotation::ACTION_SET_NULL) {
+        if ($attribute->getAction() === AnonymizerAttribute::ACTION_SET_NULL) {
             switch ($mapping['type']) {
                 case ClassMetadataInfo::MANY_TO_MANY:
                 case ClassMetadataInfo::ONE_TO_MANY:
@@ -166,7 +160,7 @@ class Anonymizer implements AnonymizerInterface
                     $object->$setter(null);
             }
         }
-        if ($annotation->getAction() === AnonymizerAnnotation::ACTION_CASCADE) {
+        if ($attribute->getAction() === AnonymizerAttribute::ACTION_CASCADE) {
             switch ($mapping['type']) {
                 case ClassMetadataInfo::MANY_TO_MANY:
                 case ClassMetadataInfo::ONE_TO_MANY:
@@ -190,13 +184,12 @@ class Anonymizer implements AnonymizerInterface
         $object,
         ReflectionProperty $property,
         ClassMetadata $metadata
-    ) {
-
+    )
+    {
         $getter = 'get' . ucfirst($property->getName());
         $setter = 'set' . ucfirst($property->getName());
 
-        $event = new CustomAnonymizeEvent($object, $this->em, $metadata, $property, $getter,
-            $setter);
+        $event = new CustomAnonymizeEvent($object, $this->em, $metadata, $property, $getter, $setter);
 
         $this->eventDispatcher->dispatch($event, CustomAnonymizeEvent::NAME);
     }
@@ -205,7 +198,7 @@ class Anonymizer implements AnonymizerInterface
     {
         $reflectionClass = new ReflectionClass($className);
 
-        return $this->reader->getClassAnnotation($reflectionClass, Anonymizable::class) !== null;
+        return !empty($reflectionClass->getAttributes(Anonymizable::class));
     }
 
     public function addAnonymizer(AnonymizerFileInterface $file, $key): void
