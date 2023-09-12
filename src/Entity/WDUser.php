@@ -11,6 +11,7 @@ use JsonSerializable;
 use Serializable;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use WebEtDesign\CmsBundle\Attribute\AsCmsVarsProperty;
 use WebEtDesign\UserBundle\Attribute\Anonymizable;
 use WebEtDesign\UserBundle\Attribute\Anonymizer;
 use WebEtDesign\UserBundle\Attribute\Exportable;
@@ -39,6 +40,7 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
     #[Anonymizer(type: Anonymizer::TYPE_EMAIL)]
     #[Exportable()]
     #[ORM\Column(type: Types::STRING, length: 180, unique: true)]
+    #[AsCmsVarsProperty('email')]
     protected ?string $email = null;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]

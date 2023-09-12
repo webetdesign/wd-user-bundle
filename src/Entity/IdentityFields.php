@@ -5,6 +5,7 @@ namespace WebEtDesign\UserBundle\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use WebEtDesign\CmsBundle\Attribute\AsCmsVarsProperty;
 use WebEtDesign\UserBundle\Attribute\Anonymizer;
 use WebEtDesign\UserBundle\Attribute\Exportable;
 
@@ -13,11 +14,13 @@ trait IdentityFields
     #[Exportable(name: 'prenom')]
     #[Anonymizer()]
     #[ORM\Column(type: Types::STRING, nullable: true)]
+    #[AsCmsVarsProperty('prenom')]
     protected ?string $firstname = null;
 
     #[Exportable(name: 'nom')]
     #[Anonymizer()]
     #[ORM\Column(type: Types::STRING, nullable: true)]
+    #[AsCmsVarsProperty('nom')]
     protected ?string $lastname = null;
 
     #[Exportable(name: 'gender')]
