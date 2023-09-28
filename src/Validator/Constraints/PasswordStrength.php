@@ -6,6 +6,10 @@ namespace WebEtDesign\UserBundle\Validator\Constraints;
 use Symfony\Component\Validator\Constraint;
 
 #[\Attribute]
+
+/**
+ * @deprecated use symfony PasswordStrength contraint instead
+ */
 class PasswordStrength extends Constraint
 {
     public function __construct(
