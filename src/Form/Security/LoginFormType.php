@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace WebEtDesign\UserBundle\Form\Security;
 
 use Symfony\Component\Form\AbstractType;
@@ -11,7 +13,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class LoginFormType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if ($options['email'] != null){
             $builder
@@ -51,7 +53,7 @@ class LoginFormType extends AbstractType
         }
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
            'translation_domain' => 'wd_user',
