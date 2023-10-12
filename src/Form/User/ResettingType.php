@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace WebEtDesign\UserBundle\Form\User;
 
@@ -14,7 +14,7 @@ use WebEtDesign\UserBundle\Entity\WDUser;
 
 class ResettingType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('plainPassword', RepeatedType::class, [
             'type'            => PasswordType::class,
@@ -43,7 +43,7 @@ class ResettingType extends AbstractType
         ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class'         => WDUser::class,

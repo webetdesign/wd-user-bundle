@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace WebEtDesign\UserBundle\Validator\Constraints;
 
@@ -10,6 +11,9 @@ use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * @deprecated use symfony PasswordStrength contraint instead
+ */
 class PasswordStrengthValidator extends ConstraintValidator
 {
     private TranslatorInterface $translator;
@@ -36,7 +40,7 @@ class PasswordStrengthValidator extends ConstraintValidator
         $this->translator = $translator;
     }
 
-    public function validate($password, Constraint $constraint)
+    public function validate($password, Constraint $constraint): void
     {
         if (null === $password || '' === $password) {
             return;
