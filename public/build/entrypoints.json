@@ -1,0 +1,12 @@
+{
+  "entrypoints": {
+    "user": {
+      "css": [
+        "/bundles/wduser/build/user.css"
+      ],
+      "js": [
+        "/bundles/wduser/build/user.js"
+      ]
+    }
+  }
+}

@@ -15,9 +15,11 @@ use Sonata\DoctrineORMAdminBundle\Filter\BooleanFilter;
 use Sonata\DoctrineORMAdminBundle\Filter\CallbackFilter;
 use Symfony\Component\Form\Event\SubmitEvent;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Validator\Constraints\PasswordStrength;
 use WebEtDesign\CmsBundle\Form\Type\SecurityRolesType;
 
 class UserAdmin extends AbstractAdmin
@@ -29,8 +31,10 @@ class UserAdmin extends AbstractAdmin
      * @return UserAdmin
      */
     public function setUserPasswordHasher(?UserPasswordHasherInterface $userPasswordHasher
-    ): UserAdmin {
+    ): UserAdmin
+    {
         $this->userPasswordHasher = $userPasswordHasher;
+
         return $this;
     }
 
@@ -102,7 +106,6 @@ class UserAdmin extends AbstractAdmin
                 );
         }
 
-
         $filterMapper
             ->add(
                 'enabled',
@@ -114,9 +117,9 @@ class UserAdmin extends AbstractAdmin
                 [
                     'callback'        => static function (
                         ProxyQueryInterface $query,
-                        string $alias,
-                        string $field,
-                        FilterData $data
+                        string              $alias,
+                        string              $field,
+                        FilterData          $data
                     ): bool {
                         if (!$data->getValue()) {
                             return false;
@@ -173,9 +176,11 @@ class UserAdmin extends AbstractAdmin
             ->add('email')
             ->add(
                 'plainPassword',
-                TextType::class,
+                PasswordType::class,
                 [
-                    'required' => (!$this->getSubject() || null === $this->getSubject()->getId()),
+                    'use_strength' => true,
+                    'sonata_admin' => true,
+                    'required'     => false,
                 ]
             )
             ->end()
@@ -203,7 +208,6 @@ class UserAdmin extends AbstractAdmin
                 )
                 ->end();
         }
-
 
         $formMapper
             ->with('Permissions individuelles')
