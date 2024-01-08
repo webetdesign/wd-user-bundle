@@ -1,0 +1,54 @@
+{% extends 'bootstrap_5_layout.html.twig' %}
+
+{%- block wd_user_password_row -%}
+    {%- if compound is defined and compound -%}
+        {%- set element = 'fieldset' -%}
+    {%- endif -%}
+    {%- set widget_attr = {} -%}
+    {%- if help is not empty -%}
+        {%- set widget_attr = {attr: {'aria-describedby': id ~"_help"}} -%}
+    {%- endif -%}
+    {%- set row_class = row_class|default(row_attr.class|default('mb-3')|trim) -%}
+    <div data-controller="password-strength"
+         data-password-strength-min-strength-value="{{ min_strength }}"
+         data-password-strength-icon-show-password-value="{{ icon_show_password }}"
+         data-password-strength-icon-hide-password-value="{{ icon_hide_password }}"
+
+    >
+        <div class="input-group">
+            <{{ element|default('div') }}{% with {attr: row_attr|merge({class: row_class})} %}{{ block('attributes') }}{% endwith %}>
+                {%- if 'form-floating' in row_class -%}
+                    {{- form_widget(form, widget_attr) -}}
+                    {{- form_label(form) -}}
+                {%- else -%}
+                    {{- form_label(form) -}}
+                    {{- form_widget(form, widget_attr) -}}
+                {%- endif -%}
+            </{{ element|default('div') }}>
+            <span type="button" class="input-group-text"
+                  data-action="click->password-strength#toogleHideShow"
+            >
+                <i data-password-strength-target="inputIcon" class="{{ icon_show_password }}"></i>
+            </span>
+            <div class="strength-lines">
+                <div class="line" data-password-strength-target="strengthVeryWeakMark"></div>
+                <div class="line" data-password-strength-target="strengthWeakMark"></div>
+                <div class="line" data-password-strength-target="strengthMediumMark"></div>
+                <div class="line" data-password-strength-target="strengthStrongMark"></div>
+                <div class="line" data-password-strength-target="strengthVeryStrongMark"></div>
+            </div>
+            {{- form_help(form) -}}
+            {{- form_errors(form) -}}
+            <div class="invalid-feedback" data-password-strength-target="strengthLabel"></div>
+        </div>
+    </div>
+{%- endblock wd_user_password_row %}
+
+{%- block wd_user_password_widget -%}
+    {%- set type = type|default('password') -%}
+    {% set attr = attr | merge({
+        'data-password-strength-target': 'input',
+        'data-action': 'keyup->password-strength#inputChange',
+    }) %}
+    {{ block('password_widget') }}
+{%- endblock wd_user_password_widget -%}

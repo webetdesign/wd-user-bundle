@@ -9,16 +9,17 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use WebEtDesign\UserBundle\Validator\Constraints as WDConstraints;
+use Symfony\Component\Validator\Constraints as Assert;
 
 trait RgpdUserFields
 {
     use RgpdAnonymizeFields;
 
+    #[Assert\PasswordStrength]
     protected ?string $plainPassword = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     #[Gedmo\Timestampable(on: 'change', field: ['password'])]
-//    #[Gedmo\Timestampable(on:"create")]                       // TODO : Est ce que la date est set au create si commenté ?
     protected ?DateTimeInterface $lastUpdatePassword = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]

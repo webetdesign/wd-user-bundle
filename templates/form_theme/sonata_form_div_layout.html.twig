@@ -1,0 +1,36 @@
+{% extends '@SonataAdmin/Form/form_admin_fields.html.twig' %}
+
+{%- block wd_user_password_admin_widget -%}
+    {%- set type = type|default('password') -%}
+    {% set attr = attr | merge({
+        'data-password-strength-target': 'input',
+        'data-action': 'keyup->password-strength#inputChange',
+    }) %}
+    <div data-controller="password-strength"
+         data-password-strength-is-admin-value="{{ is_admin }}"
+         data-password-strength-min-strength-value="{{ min_strength }}"
+         data-password-strength-icon-show-password-value="{{ icon_show_password }}"
+         data-password-strength-icon-hide-password-value="{{ icon_hide_password }}"
+    >
+        <div class="input-group" style="width: 100%">
+            {{ block('form_widget_simple') }}
+            <span class="input-group-addon" style="width: 30px; cursor: pointer"
+                  data-action="click->password-strength#toogleHideShow"
+            >
+                <i data-password-strength-target="inputIcon" class="{{ icon_show_password }}"></i>
+            </span>
+        </div>
+        <div class="strength-lines strength-lines-admin">
+            <div class="line" data-password-strength-target="strengthVeryWeakMark"></div>
+            <div class="line" data-password-strength-target="strengthWeakMark"></div>
+            <div class="line" data-password-strength-target="strengthMediumMark"></div>
+            <div class="line" data-password-strength-target="strengthStrongMark"></div>
+            <div class="line" data-password-strength-target="strengthVeryStrongMark"></div>
+        </div>
+        <div class="help-block" data-password-strength-target="strengthLabel"></div>
+    </div>
+{%- endblock wd_user_password_admin_widget -%}
+
+
+
+
