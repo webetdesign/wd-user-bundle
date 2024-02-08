@@ -8,6 +8,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use WebEtDesign\UserBundle\Event\OnCreateUserFromAzureEvent;
 use WebEtDesign\UserBundle\Repository\WDGroupRepository;
 
 class AuthUserHelper
@@ -15,7 +17,8 @@ class AuthUserHelper
     public function __construct(
         protected EntityManagerInterface $em,
         protected ParameterBagInterface $parameterBag,
-        protected WDGroupRepository $groupRepository
+        protected WDGroupRepository $groupRepository,
+        protected EventDispatcherInterface $eventDispatcher,
     )
     {
     }
@@ -44,6 +47,9 @@ class AuthUserHelper
                 $group->addUser($user);
             }
         }
+
+        $event = new OnCreateUserFromAzureEvent($clientName, $user, $resourceOwner->toArray());
+        $this->eventDispatcher->dispatch($event, OnCreateUserFromAzureEvent::NAME);
 
         $this->em->persist($user);
         $this->em->flush();
