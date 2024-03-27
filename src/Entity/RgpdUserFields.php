@@ -15,7 +15,8 @@ trait RgpdUserFields
 {
     use RgpdAnonymizeFields;
 
-    #[Assert\PasswordStrength]
+    // Wait for php 8.3 => need attribute override to be put in all projects
+    //#[Assert\PasswordStrength]
     protected ?string $plainPassword = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
