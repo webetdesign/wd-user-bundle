@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace WebEtDesign\UserBundle\Security;
 
+use DateTime;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,11 +15,14 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\HttpUtils;
+use Symfony\Component\Security\Http\Util\TargetPathTrait;
 use WebEtDesign\UserBundle\Security\Passport\AzurePassport;
 use WebEtDesign\UserBundle\Services\AuthUserHelper;
 
 class AdminAzureLoginAuthenticator extends AbstractAuthenticator
 {
+    use TargetPathTrait;
+
     public function __construct(
         protected HttpUtils $httpUtils,
         protected UserProviderInterface $userProvider,
@@ -52,7 +56,15 @@ class AdminAzureLoginAuthenticator extends AbstractAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        return new RedirectResponse($this->httpUtils->generateUri($request, 'sonata_admin_dashboard'));
+        $this->userHelper->updateLastLogin($token->getUser());
+
+        if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
+            $response = new RedirectResponse($targetPath);
+        } else {
+            $response = new RedirectResponse($this->httpUtils->generateUri($request, 'sonata_admin_dashboard'));
+        }
+
+        return $response;
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response

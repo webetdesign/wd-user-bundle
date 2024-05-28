@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace WebEtDesign\UserBundle\Services;
 
 use App\Entity\User\User;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -67,6 +68,13 @@ class AuthUserHelper
         return $user;
     }
 
+    public function updateLastLogin(User $user)
+    {
+        $user->setLastLogin(new DateTime());
+        $this->em->persist($user);
+        $this->em->flush();
+    }
+    
     protected function getConfig(string $clientName)
     {
         $clientConfigs = $this->parameterBag->get('wd_user.azure.clients');
