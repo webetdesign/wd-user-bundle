@@ -6,7 +6,13 @@ namespace WebEtDesign\UserBundle\Event;
 use Symfony\Contracts\EventDispatcher\Event;
 use WebEtDesign\MailerBundle\Attribute\MailEvent;
 
-#[MailEvent(name: self::NAME, label: 'Routine notification d\'inactivité')]
+#[MailEvent(
+    name: self::NAME,
+    label: 'Routine notification d\'inactivité',
+    subject: 'Notification d\'inactivité',
+    templateHtml: '@WDUser/emails/ROUTINE_INACTIVITY_NOTIFICATION.html.twig',
+    templateText: '@WDUser/emails/ROUTINE_INACTIVITY_NOTIFICATION.txt.twig'
+)]
 class RoutineInactivityNotification extends Event
 {
     public const NAME = 'ROUTINE_INACTIVITY_NOTIFICATION';
