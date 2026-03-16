@@ -2,9 +2,10 @@
 
 namespace WebEtDesign\UserBundle\Voter;
 
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
-use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 abstract class AbstractAdminVoter implements VoterInterface
@@ -36,7 +37,7 @@ abstract class AbstractAdminVoter implements VoterInterface
         return $supportedClass === get_class($class) || is_subclass_of(get_class($class), $supportedClass);
     }
 
-    public function supportsAttribute($attribute)
+    public function supportsAttribute($attribute): bool
     {
         return in_array($attribute, array_merge([
             self::VIEW,
@@ -48,7 +49,7 @@ abstract class AbstractAdminVoter implements VoterInterface
         ], $this->customAttributes), true);
     }
 
-    public function vote(TokenInterface $token, $entity, array $attributes): int
+    public function vote(TokenInterface $token, mixed $entity, array $attributes, ?Vote $vote = null): int
     {
         /** @var UserInterface $user */
         $user = $token->getUser();
@@ -58,7 +59,7 @@ abstract class AbstractAdminVoter implements VoterInterface
         }
 
         $attribute = $attributes[0];
-        
+
         if (!$this->supportsClass($entity) || !$this->supportsAttribute($attribute)) {
             return VoterInterface::ACCESS_ABSTAIN;
         }
