@@ -36,7 +36,7 @@ class LoginAttemptSubscriber implements EventSubscriberInterface
     {
         $request = $event->getRequest();
 
-        $loginAttempts = $this->loginAttemptRepository->findBy(['username' => $request->get('_username'), 'ipAddress' => $request->getClientIp()]);
+        $loginAttempts = $this->loginAttemptRepository->findBy(['username' => $request->request->get('_username'), 'ipAddress' => $request->getClientIp()]);
         foreach ($loginAttempts as $loginAttempt) {
             $this->em->remove($loginAttempt);
         }
@@ -50,7 +50,7 @@ class LoginAttemptSubscriber implements EventSubscriberInterface
         $request = $event->getRequest();
 
         $loginAttempt = (new LoginAttempt())
-            ->setUsername($request->get('_username'))
+            ->setUsername($request->request->get('_username'))
             ->setDate(new DateTime('now'))
             ->setFirewall($event->getFirewallName())
             ->setIpAddress($request->getClientIp());

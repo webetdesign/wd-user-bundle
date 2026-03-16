@@ -15,7 +15,7 @@ class RoleActivator implements ActivatorInterface
     /**
      * {@inheritdoc}
      */
-    public function checkRequest(Request $request = null): bool
+    public function checkRequest(?Request $request = null): bool
     {
         try {
             return $this->authorizationChecker->isGranted('ROLE_TRANSLATE');
