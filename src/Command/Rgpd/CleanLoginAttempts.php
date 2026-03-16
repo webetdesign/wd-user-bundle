@@ -20,7 +20,7 @@ class CleanLoginAttempts extends Command
     public function __construct(
         private ParameterBagInterface $params,
         private LoginAttemptRepository $loginAttemptRepository,
-        string $name = null
+        ?string $name = null
     ) {
         parent::__construct($name);
     }

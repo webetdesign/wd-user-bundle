@@ -31,7 +31,7 @@ class RgpdInactiveUserCommand extends Command
         private EventDispatcherInterface $eventDispatcher,
         private RouterInterface $router,
         private AnonymizerInterface $anonymizer,
-        string $name = null
+        ?string $name = null
     ) {
         parent::__construct($name);
     }

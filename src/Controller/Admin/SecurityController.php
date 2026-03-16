@@ -8,7 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use WebEtDesign\UserBundle\Security\AdminFormLoginAuthenticator;
@@ -44,7 +44,7 @@ class SecurityController extends AbstractController
 
         // first form with email or username are submitted
         if ($request->isMethod('POST')) {
-            $email = $request->get('_username');
+            $email = $request->request->get('_username');
 
             $configClients = $parameterBag->get('wd_user.azure.clients');
 
@@ -65,7 +65,7 @@ class SecurityController extends AbstractController
 
             // No azure configuration has been found, we display the second form with password field
             $action       = $router->generate('admin_login_check');
-            $lastUsername = $request->get('_username');
+            $lastUsername = $request->request->get('_username');
             $withPassword = true;
         } elseif ($request->getSession()->get('_security.error_context') === AdminFormLoginAuthenticator::ERROR_CONTEXT) {
             // When user's credentials (login / password) are wrong, we forced the second form with password field.
