@@ -245,6 +245,7 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
         $this->banReason = $banReason;
     }
 
+
     /**
      * @return bool
      */

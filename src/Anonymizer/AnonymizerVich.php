@@ -2,24 +2,23 @@
 
 namespace WebEtDesign\UserBundle\Anonymizer;
 
-use Doctrine\Common\Annotations\AnnotationReader;
 use ReflectionProperty;
 use Vich\UploaderBundle\Handler\UploadHandler;
-use Vich\UploaderBundle\Mapping\Annotation\UploadableField;
+use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
 
 class AnonymizerVich implements AnonymizerFileInterface
 {
     private UploadHandler $uploadHandler;
-    private AnnotationReader $reader;
+    private PropertyMappingFactory $propertyMappingFactory;
 
     /**
      * AnonymizerVich constructor.
      * @param UploadHandler $uploadHandler
      */
-    public function __construct(UploadHandler $uploadHandler)
+    public function __construct(UploadHandler $uploadHandler, PropertyMappingFactory $propertyMappingFactory)
     {
         $this->uploadHandler = $uploadHandler;
-        $this->reader       = new AnnotationReader();
+        $this->propertyMappingFactory = $propertyMappingFactory;
     }
 
     /**
@@ -27,13 +26,20 @@ class AnonymizerVich implements AnonymizerFileInterface
      * @param ReflectionProperty|null $property
      * @return mixed
      */
-    public function doAnonymize($object, ?ReflectionProperty $property = null)
+    public function doAnonymize($object, ?ReflectionProperty $property = null): mixed
     {
-        /** @var UploadableField $annotation */
-        $annotation = $this->reader->getPropertyAnnotation($property, UploadableField::class);
+        if ($property === null) {
+            return $object;
+        }
+
+        $mapping = $this->propertyMappingFactory->fromField($object, $property->getName());
+        if ($mapping === null) {
+            return $object;
+        }
+
         $this->uploadHandler->remove($object, $property->getName());
-        $setter = 'set' . ucfirst($annotation->getFileNameProperty());
-        $object->$setter('anonymous_' . uniqid());
+        $mapping->setFileName($object, 'anonymous_' . uniqid());
+
         return $object;
     }
 }

@@ -4,35 +4,22 @@
 namespace WebEtDesign\UserBundle\Exporter;
 
 
-use Doctrine\Common\Annotations\AnnotationReader;
 use ReflectionProperty;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Vich\UploaderBundle\Mapping\Annotation\UploadableField;
-use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
+use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
+use Vich\UploaderBundle\Storage\StorageInterface;
 
 class ExporterVich implements ExporterFileInterface
 {
-    /**
-     * @var AnnotationReader
-     */
-    protected AnnotationReader $reader;
-    /**
-     * @var ParameterBagInterface
-     */
-    private ParameterBagInterface $parameterBag;
-    /**
-     * @var ?UploaderHelper
-     */
-    private ?UploaderHelper $vichHelper;
+    private PropertyMappingFactory $propertyMappingFactory;
+    private StorageInterface $storage;
 
     /**
      * @inheritDoc
      */
-    public function __construct(ParameterBagInterface $parameterBag, ?UploaderHelper $vichHelper = null)
+    public function __construct(PropertyMappingFactory $propertyMappingFactory, StorageInterface $storage)
     {
-        $this->reader       = new AnnotationReader();
-        $this->parameterBag = $parameterBag;
-        $this->vichHelper   = $vichHelper;
+        $this->propertyMappingFactory = $propertyMappingFactory;
+        $this->storage = $storage;
     }
 
 
@@ -41,34 +28,54 @@ class ExporterVich implements ExporterFileInterface
         $object,
         ?ReflectionProperty $property = null
     ) {
-        if ($this->vichHelper === null) {
+        if ($property === null) {
             return null;
         }
 
-        /** @var UploadableField $annotation */
-        $annotation = $this->reader->getPropertyAnnotation($property, UploadableField::class);
-        $imgPath    = $this->vichHelper->asset($object, $property->getName());
+        $mapping = $this->propertyMappingFactory->fromField($object, $property->getName());
 
-        if ($imgPath === null || $annotation === null) {
+        if ($mapping === null) {
             return null;
         }
 
-       try{
-           $publicDir = $this->parameterBag->get('kernel.project_dir') . '/public';
-           $getter    = 'get' . ucfirst($annotation->getFileNameProperty());
+        $fileName = $mapping->getFileName($object);
+        if (empty($fileName)) {
+            return null;
+        }
 
-           $path    = $publicDir . $imgPath;
-           $newPath = $tmpDir . '/' . $object->$getter();
+        $stream = $this->storage->resolveStream($object, $property->getName());
+        if ($stream === null) {
+            return null;
+        }
 
-           copy($path, $newPath);
-       }catch (\Exception $e){
+        try {
+            $newPath = $tmpDir . '/' . $fileName;
+            $destination = fopen($newPath, 'wb');
+            if ($destination === false) {
+                if (is_resource($stream)) {
+                    fclose($stream);
+                }
+                return [
+                    'file' => null,
+                ];
+            }
+
+            stream_copy_to_stream($stream, $destination);
+            fclose($destination);
+            if (is_resource($stream)) {
+                fclose($stream);
+            }
+        } catch (\Throwable $e) {
+            if (is_resource($stream)) {
+                fclose($stream);
+            }
             return [
                 'file' => null
             ];
-       }
+        }
 
         return [
-            'file' => $object->$getter()
+            'file' => $fileName
         ];
     }
 }

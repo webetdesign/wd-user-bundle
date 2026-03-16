@@ -4,42 +4,29 @@
 namespace WebEtDesign\UserBundle\Services\Exporter;
 
 
-use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use ReflectionClass;
+use ReflectionProperty;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
-use WebEtDesign\UserBundle\Annotations\Exportable;
+use WebEtDesign\UserBundle\Attribute\Exportable;
 use WebEtDesign\UserBundle\Exporter\ExporterFileInterface;
 use WebEtDesign\UserBundle\Utils\LoopGuard;
 use ZipArchive;
 
 class Exporter implements ExporterInterface
 {
-    /**
-     * @var AnnotationReader
-     */
-    protected AnnotationReader $reader;
-    /**
-     * @var EntityManagerInterface
-     */
     private EntityManagerInterface $em;
 
     private LoopGuard $loopGuard;
-    /**
-     * @var ContainerInterface
-     */
     private ContainerInterface $container;
 
     private string $tmpDir;
 
-    /**
-     * @var RouterInterface
-     */
     private RouterInterface $router;
 
     /**
@@ -55,7 +42,6 @@ class Exporter implements ExporterInterface
         ContainerInterface $container,
         RouterInterface $router
     ) {
-        $this->reader    = new AnnotationReader();
         $this->em        = $em;
         $this->loopGuard = new LoopGuard();
         $this->container = $container;
@@ -94,9 +80,8 @@ class Exporter implements ExporterInterface
 
             $reflectionClass = $metadata->getReflectionClass();
             foreach ($reflectionClass->getProperties() as $property) {
-                /** @var Exportable $annotation */
-                if (($annotation = $this->reader->getPropertyAnnotation($property,
-                    Exportable::class))) {
+                $annotation = $this->getPropertyAnnotation($property);
+                if ($annotation !== null) {
 
                     $name = !empty($annotation->getName()) ? $annotation->getName() : $property->getName();
 
@@ -158,7 +143,24 @@ class Exporter implements ExporterInterface
     {
         $reflectionClass = new ReflectionClass($className);
 
-        return $this->reader->getClassAnnotation($reflectionClass, Exportable::class);
+        $attributes = $reflectionClass->getAttributes(Exportable::class);
+
+        if (empty($attributes)) {
+            return null;
+        }
+
+        return $attributes[0]->newInstance();
+    }
+
+    private function getPropertyAnnotation(ReflectionProperty $property): ?Exportable
+    {
+        $attributes = $property->getAttributes(Exportable::class);
+
+        if (empty($attributes)) {
+            return null;
+        }
+
+        return $attributes[0]->newInstance();
     }
 
     private function getTmpDir()
