@@ -1,6 +1,5 @@
 {
   "name": "webetdesign/wd-user-bundle",
-  "version": "7.x-dev",
   "type": "symfony-bundle",
   "license": "proprietary",
   "authors": [
