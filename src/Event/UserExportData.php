@@ -3,7 +3,15 @@
 namespace WebEtDesign\UserBundle\Event;
 
 use Symfony\Contracts\EventDispatcher\Event;
+use WebEtDesign\MailerBundle\Attribute\MailEvent;
 
+#[MailEvent(
+    name: self::NAME,
+    label: 'Export données utilisateur',
+    subject: 'Export de vos données',
+    templateHtml: '@WDUser/emails/USER_EXPORT_DATA.html.twig',
+    templateText: '@WDUser/emails/USER_EXPORT_DATA.txt.twig'
+)]
 class UserExportData extends Event
 {
     public const NAME = 'USER_EXPORT_DATA';
