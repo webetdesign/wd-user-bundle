@@ -57,6 +57,10 @@ class WDUserBundle extends AbstractBundle
             $config['azure_directory']['clients']
         );
         $container->parameters()->set(
+            'wd_user.impersonate.login_route',
+            $config['impersonate']['login_route']
+        );
+        $container->parameters()->set(
             'wd_user.impersonate.logout_route',
             $config['impersonate']['logout_route']
         );
@@ -149,6 +153,7 @@ class WDUserBundle extends AbstractBundle
             ->end()
             ->arrayNode('impersonate')->addDefaultsIfNotSet()
                 ->children()
+                    ->scalarNode('login_route')->defaultValue('homepage')->end()
                     ->scalarNode('logout_route')->defaultValue('admin_app_user_user_list')->end()
                 ->end()
             ->end()
