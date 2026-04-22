@@ -18,6 +18,7 @@ use Symfony\Component\Security\Http\HttpUtils;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 use WebEtDesign\UserBundle\Security\Passport\AzurePassport;
 use WebEtDesign\UserBundle\Services\AuthUserHelper;
+use Symfony\Component\Security\Http\SecurityRequestAttributes;
 
 class AdminAzureLoginAuthenticator extends AbstractAuthenticator
 {
@@ -69,7 +70,7 @@ class AdminAzureLoginAuthenticator extends AbstractAuthenticator
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
-        $request->getSession()->set(Security::AUTHENTICATION_ERROR, $exception);
+        $request->getSession()->set(SecurityRequestAttributes::AUTHENTICATION_ERROR, $exception);
         return new RedirectResponse($this->httpUtils->generateUri($request, 'admin_login'));
     }
 }
