@@ -24,6 +24,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordC
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\HttpUtils;
 use WebEtDesign\UserBundle\Security\Passport\LoginAttemptBadge;
+use Symfony\Component\Security\Http\SecurityRequestAttributes;
 
 class AdminFormLoginAuthenticator extends AbstractAuthenticator
 {
@@ -88,7 +89,7 @@ class AdminFormLoginAuthenticator extends AbstractAuthenticator
     {
         $response = new RedirectResponse($this->router->generate('admin_login'));
 
-        $request->getSession()->set(Security::AUTHENTICATION_ERROR, $exception);
+        $request->getSession()->set(SecurityRequestAttributes::AUTHENTICATION_ERROR, $exception);
         $request->getSession()->set('_security.error_context', self::ERROR_CONTEXT);
 
         return $response;
@@ -118,7 +119,7 @@ class AdminFormLoginAuthenticator extends AbstractAuthenticator
             throw new BadCredentialsException('Invalid username.');
         }
 
-        $request->getSession()->set(Security::LAST_USERNAME, $credentials['username']);
+        $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $credentials['username']);
 
         return $credentials;
     }
