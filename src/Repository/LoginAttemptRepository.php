@@ -15,6 +15,8 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
  */
 class LoginAttemptRepository extends ServiceEntityRepository
 {
+    private const DELETE_BATCH_SIZE = 50000;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, LoginAttempt::class);
@@ -43,23 +45,42 @@ class LoginAttemptRepository extends ServiceEntityRepository
         }
     }
 
-    public function deleteOldLoginAttempts(int $delay)
+    /**
+     * Par lots : la commande de purge n'ayant jamais pu s'exécuter — elle lisait un paramètre
+     * inexistant — son premier passage porte sur l'arriéré complet, plusieurs centaines de milliers
+     * de lignes en production. Un DELETE unique les tiendrait dans une seule transaction.
+     *
+     * Le try/catch précédent relançait `new $e`, ce qui reconstruisait l'exception sans son
+     * message : il masquait la cause au lieu de la propager.
+     */
+    public function deleteOldLoginAttempts(int $delay): int
     {
-        try {
-            $timeAgo = new \DateTimeImmutable(sprintf('-%d minutes', $delay));
+        $timeAgo = new \DateTimeImmutable(sprintf('-%d minutes', $delay));
+        $deleted = 0;
 
-            return $this->createQueryBuilder('la')
+        do {
+            $ids = array_column(
+                $this->createQueryBuilder('la')
+                    ->select('la.id')
+                    ->where('la.date < :date')->setParameter('date', $timeAgo)
+                    ->setMaxResults(self::DELETE_BATCH_SIZE)
+                    ->getQuery()
+                    ->getScalarResult(),
+                'id'
+            );
+
+            if ([] === $ids) {
+                break;
+            }
+
+            $deleted += (int) $this->createQueryBuilder('la')
                 ->delete()
-                ->where('la.date < :date')
-                ->setParameters([
-                    'date' => $timeAgo,
-                ])
+                ->where('la.id IN (:ids)')->setParameter('ids', $ids)
                 ->getQuery()
-                ->getResult()
-                ;
-        } catch (\Exception $e) {
-            throw new $e;
-        }
+                ->execute();
+        } while (count($ids) === self::DELETE_BATCH_SIZE);
+
+        return $deleted;
     }
 
     public function countAttemptSince(string $ip, string $username, DateTime $since): int

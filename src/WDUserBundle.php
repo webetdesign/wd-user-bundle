@@ -89,6 +89,10 @@ class WDUserBundle extends AbstractBundle
             $config['security']['max_attempts']
         );
         $container->parameters()->set(
+            'wd_user.security.cleanup_delay',
+            $config['security']['cleanup_delay']
+        );
+        $container->parameters()->set(
             'wd_user.inactivity.duration',
             $config['inactivity']['duration']
         );
@@ -179,8 +183,11 @@ class WDUserBundle extends AbstractBundle
             ->end()
             ->arrayNode('security')->addDefaultsIfNotSet()
                 ->children()
+                    // Fenêtre glissante de comptage des tentatives, en SECONDES.
                     ->scalarNode('delay')->defaultValue(15)->end()
                     ->scalarNode('max_attempts')->defaultValue(5)->end()
+                    // Rétention des tentatives en base pour rgpd:clean-login-attempts, en MINUTES.
+                    ->integerNode('cleanup_delay')->defaultValue(43200)->end()
                 ->end()
             ->end()
             ->append($this->addAzureConfig())

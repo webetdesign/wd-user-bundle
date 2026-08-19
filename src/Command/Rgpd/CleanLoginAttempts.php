@@ -12,11 +12,13 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use WebEtDesign\UserBundle\Repository\LoginAttemptRepository;
 
 #[AsCommand(
-    name: 'rgpd:clean-login-attempts',
+    name: CleanLoginAttempts::NAME,
     description: 'Clean login attempts',
 )]
 class CleanLoginAttempts extends Command
 {
+    public const NAME = 'rgpd:clean-login-attempts';
+
     public function __construct(
         private ParameterBagInterface $params,
         private LoginAttemptRepository $loginAttemptRepository,
@@ -27,10 +29,15 @@ class CleanLoginAttempts extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $delay = $this->params->get('wd_user.security.admin_delay');
+        // 'wd_user.security.admin_delay' n'a jamais été déclaré par la configuration du bundle :
+        // la commande levait une ParameterNotFoundException à chaque exécution, et la table n'a
+        // donc jamais pu être purgée.
+        $delay = $this->params->get('wd_user.security.cleanup_delay');
 
-        $this->loginAttemptRepository->deleteOldLoginAttempts($delay);
+        $deleted = $this->loginAttemptRepository->deleteOldLoginAttempts($delay);
 
-        return 0;
+        $output->writeln(sprintf('%d login attempt(s) deleted.', $deleted));
+
+        return Command::SUCCESS;
     }
 }

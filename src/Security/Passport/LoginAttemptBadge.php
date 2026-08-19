@@ -8,14 +8,15 @@ class LoginAttemptBadge implements BadgeInterface
 {
     private bool $resolved = false;
 
-    public function __construct(private string $ip, private string $username) {}
+    // Nullable : un POST sur le check_path sans champ _username produisait sinon une TypeError.
+    public function __construct(private ?string $ip, private ?string $username) {}
 
-    public function getIp(): string
+    public function getIp(): ?string
     {
         return $this->ip;
     }
 
-    public function getUsername(): string
+    public function getUsername(): ?string
     {
         return $this->username;
     }
