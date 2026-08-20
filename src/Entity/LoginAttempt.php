@@ -65,28 +65,28 @@ class LoginAttempt
         return $this->firewall;
     }
 
-    public function setIpAddress(?string $ipAddress): self
+    public function setIpAddress(?string $ipAddress): static
     {
         $this->ipAddress = $ipAddress;
 
         return $this;
     }
 
-    public function setDate(DateTime $date): self
+    public function setDate(DateTime $date): static
     {
         $this->date = $date;
 
         return $this;
     }
 
-    public function setUsername(?string $username): self
+    public function setUsername(?string $username): static
     {
         $this->username = $username;
 
         return $this;
     }
 
-    public function setFirewall(?string $firewall): self
+    public function setFirewall(?string $firewall): static
     {
         $this->firewall = $firewall;
 

@@ -101,9 +101,8 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
 
     /**
      * @param string|null $username
-     * @return WDUser
      */
-    public function setUsernameForm(?string $username): WDUser
+    public function setUsernameForm(?string $username): static
     {
         $this->username = $username;
 
@@ -112,9 +111,8 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
 
     /**
      * @param string|null $username
-     * @return WDUser
      */
-    public function setUsername(?string $username): WDUser
+    public function setUsername(?string $username): static
     {
         $this->username = $username;
 
@@ -143,7 +141,7 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
         return array_unique($permissions);
     }
 
-    public function setPermissions(array $permissions): self
+    public function setPermissions(array $permissions): static
     {
         $this->permissions = $permissions;
 
@@ -163,7 +161,7 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
         return $this->password;
     }
 
-    public function setPassword(?string $password): self
+    public function setPassword(?string $password): static
     {
         $this->password = $password;
 
@@ -200,9 +198,8 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
 
     /**
      * @param DateTime|null $lastLogin
-     * @return WDUser
      */
-    public function setLastLogin(?DateTime $lastLogin): WDUser
+    public function setLastLogin(?DateTime $lastLogin): static
     {
         $this->setNotifyInactivityAt(null);
 
@@ -221,9 +218,8 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
 
     /**
      * @param bool|null $newsletter
-     * @return WDUser
      */
-    public function setNewsletter(?bool $newsletter): self
+    public function setNewsletter(?bool $newsletter): static
     {
         $this->newsletter = $newsletter;
         return $this;
@@ -264,9 +260,8 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
 
     /**
      * @param string|null $token
-     * @return WDUser
      */
-    public function setToken(?string $token): WDUser
+    public function setToken(?string $token): static
     {
         $this->token = $token;
 
@@ -283,9 +278,8 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
 
     /**
      * @param string|null $confirmationToken
-     * @return WDUser
      */
-    public function setConfirmationToken(?string $confirmationToken): WDUser
+    public function setConfirmationToken(?string $confirmationToken): static
     {
         $this->confirmationToken = $confirmationToken;
 
@@ -302,9 +296,8 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
 
     /**
      * @param DateTime|null $passwordRequestedAt
-     * @return WDUser
      */
-    public function setPasswordRequestedAt(?DateTime $passwordRequestedAt): WDUser
+    public function setPasswordRequestedAt(?DateTime $passwordRequestedAt): static
     {
         $this->passwordRequestedAt = $passwordRequestedAt;
 
@@ -321,9 +314,8 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
 
     /**
      * @param string|null $email
-     * @return WDUser
      */
-    public function setEmail(?string $email): WDUser
+    public function setEmail(?string $email): static
     {
         $this->email = $email;
 
@@ -348,9 +340,8 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
 
     /**
      * @param bool $enabled
-     * @return WDUser
      */
-    public function setEnabled(bool $enabled): WDUser
+    public function setEnabled(bool $enabled): static
     {
         $this->enabled = $enabled;
 
@@ -359,9 +350,8 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
 
     /**
      * @param DateTime|null $newsletterAcceptedAt
-     * @return WDUser
      */
-    public function setNewsletterAcceptedAt(?DateTime $newsletterAcceptedAt): WDUser
+    public function setNewsletterAcceptedAt(?DateTime $newsletterAcceptedAt): static
     {
         $this->newsletterAcceptedAt = $newsletterAcceptedAt;
         return $this;

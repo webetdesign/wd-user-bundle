@@ -43,7 +43,7 @@ trait IdentityFields
      * @param string|null $firstname
      * @return IdentityFields
      */
-    public function setFirstname(?string $firstname): self
+    public function setFirstname(?string $firstname): static
     {
         $this->firstname = $firstname;
         return $this;
@@ -61,7 +61,7 @@ trait IdentityFields
      * @param string|null $lastname
      * @return IdentityFields
      */
-    public function setLastname(?string $lastname): self
+    public function setLastname(?string $lastname): static
     {
         $this->lastname = $lastname;
         return $this;
@@ -79,7 +79,7 @@ trait IdentityFields
      * @param string|null $gender
      * @return IdentityFields
      */
-    public function setGender(?string $gender): self
+    public function setGender(?string $gender): static
     {
         $this->gender = $gender;
         return $this;
@@ -97,7 +97,7 @@ trait IdentityFields
      * @param string|null $locale
      * @return IdentityFields
      */
-    public function setLocale(?string $locale): self
+    public function setLocale(?string $locale): static
     {
         $this->locale = $locale;
         return $this;

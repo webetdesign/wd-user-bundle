@@ -37,7 +37,7 @@ trait RgpdUserFields
 
     public ?bool $rgpdConfirm = false;
 
-    public function setPlainPassword(?string $plainPassword): self
+    public function setPlainPassword(?string $plainPassword): static
     {
         $this->plainPassword = $plainPassword;
         return $this;
@@ -56,7 +56,7 @@ trait RgpdUserFields
         return $this->lastUpdatePassword;
     }
 
-    public function setLastUpdatePassword(DateTimeInterface $lastUpdatePassword): self
+    public function setLastUpdatePassword(DateTimeInterface $lastUpdatePassword): static
     {
         $this->lastUpdatePassword = $lastUpdatePassword;
 
@@ -68,7 +68,7 @@ trait RgpdUserFields
         return $this->notifyUpdatePasswordAt;
     }
 
-    public function setNotifyUpdatePasswordAt(?DateTime $notifyUpdatePasswordAt): self
+    public function setNotifyUpdatePasswordAt(?DateTime $notifyUpdatePasswordAt): static
     {
         $this->notifyUpdatePasswordAt = $notifyUpdatePasswordAt;
         return $this;
@@ -79,7 +79,7 @@ trait RgpdUserFields
         return $this->notifyInactivityAt;
     }
 
-    public function setNotifyInactivityAt(?DateTime $notifyInactivityAt): self
+    public function setNotifyInactivityAt(?DateTime $notifyInactivityAt): static
     {
         $this->notifyInactivityAt = $notifyInactivityAt;
         return $this;
@@ -90,7 +90,7 @@ trait RgpdUserFields
         return $this->rgpdAcceptedAt;
     }
 
-    public function setRgpdAcceptedAt(?\DateTimeInterface $rgpdAcceptedAt): self
+    public function setRgpdAcceptedAt(?\DateTimeInterface $rgpdAcceptedAt): static
     {
         $this->rgpdAcceptedAt = $rgpdAcceptedAt;
 
