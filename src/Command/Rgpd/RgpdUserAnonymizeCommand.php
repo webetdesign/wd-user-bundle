@@ -53,7 +53,6 @@ class RgpdUserAnonymizeCommand extends Command
         $io->listing([
             'email: ' . (string) $user->getEmail(),
             'username: ' . (string) $user->getUsername(),
-            'profileImageName: ' . (string) ($user->getProfileImageName() ?? 'null'),
         ]);
 
         return Command::SUCCESS;

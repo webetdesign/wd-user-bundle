@@ -6,7 +6,6 @@ use DateTime;
 use Doctrine\Inflector\InflectorFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
-use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use ReflectionClass;
 use ReflectionProperty;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -146,31 +145,31 @@ class Anonymizer implements AnonymizerInterface
         $mapping = $metadata->getAssociationMapping($property->getName());
         if ($attribute->getAction() === AnonymizerAttribute::ACTION_SET_NULL) {
             switch ($mapping['type']) {
-                case ClassMetadataInfo::MANY_TO_MANY:
-                case ClassMetadataInfo::ONE_TO_MANY:
+                case ClassMetadata::MANY_TO_MANY:
+                case ClassMetadata::ONE_TO_MANY:
                     $getter  = 'get' . ucfirst($property->getName());
                     $remover = 'remove' . ucfirst($inflector->singularize($property->getName()));
                     foreach ($object->$getter() as $item) {
                         $object->$remover($item);
                     }
                     break;
-                case ClassMetadataInfo::MANY_TO_ONE:
-                case ClassMetadataInfo::ONE_TO_ONE:
+                case ClassMetadata::MANY_TO_ONE:
+                case ClassMetadata::ONE_TO_ONE:
                     $setter = 'set' . ucfirst($property->getName());
                     $object->$setter(null);
             }
         }
         if ($attribute->getAction() === AnonymizerAttribute::ACTION_CASCADE) {
             switch ($mapping['type']) {
-                case ClassMetadataInfo::MANY_TO_MANY:
-                case ClassMetadataInfo::ONE_TO_MANY:
+                case ClassMetadata::MANY_TO_MANY:
+                case ClassMetadata::ONE_TO_MANY:
                     $getter = 'get' . ucfirst($property->getName());
                     foreach ($object->$getter() as $item) {
                         $this->anonimize($item);
                     }
                     break;
-                case ClassMetadataInfo::MANY_TO_ONE:
-                case ClassMetadataInfo::ONE_TO_ONE:
+                case ClassMetadata::MANY_TO_ONE:
+                case ClassMetadata::ONE_TO_ONE:
                     $getter = 'get' . ucfirst($property->getName());
                     $child  = $object->$getter();
                     if ($child) {

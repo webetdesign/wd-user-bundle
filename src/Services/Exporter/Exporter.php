@@ -5,7 +5,7 @@ namespace WebEtDesign\UserBundle\Services\Exporter;
 
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\ClassMetadataInfo;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use ReflectionClass;
 use ReflectionProperty;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -94,8 +94,8 @@ class Exporter implements ExporterInterface
                     if ($metadata->hasAssociation($property->getName())) {
                         $mapping = $metadata->getAssociationMapping($property->getName());
                         switch ($mapping['type']) {
-                            case ClassMetadataInfo::MANY_TO_MANY:
-                            case ClassMetadataInfo::ONE_TO_MANY:
+                            case ClassMetadata::MANY_TO_MANY:
+                            case ClassMetadata::ONE_TO_MANY:
                                 $getter = 'get' . ucfirst($property->getName());
 
                                 $output[$name] = [];
@@ -103,8 +103,8 @@ class Exporter implements ExporterInterface
                                     $output[$name][] = $item ? $this->doExport($item) : null;
                                 }
                                 break;
-                            case ClassMetadataInfo::MANY_TO_ONE:
-                            case ClassMetadataInfo::ONE_TO_ONE:
+                            case ClassMetadata::MANY_TO_ONE:
+                            case ClassMetadata::ONE_TO_ONE:
                                 $getter = 'get' . ucfirst($property->getName());
                                 if ($annotation->getType() === Exportable::TYPE_SONATA_MEDIA) {
                                     $exporter = $this->getExporter(Exportable::TYPE_SONATA_MEDIA);
