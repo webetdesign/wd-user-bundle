@@ -101,7 +101,7 @@
                 const childElement = document.querySelector('input[type="checkbox"][value="' + child + '"]');
                 if (childElement) {
                     setCheckbox(childElement, element.checked);
-                    childElement.nextElementSibling.dispatchEvent(new Event('click'));
+                    childElement.nextElementSibling?.dispatchEvent(new Event('click'));
                 }
 
                 const roleCat = document.querySelector('[data-role="' + child + '"]');
@@ -122,7 +122,7 @@
                 setChildren(element);
             }
 
-            element.nextElementSibling.addEventListener('click', function (event) {
+            element.nextElementSibling?.addEventListener('click', function (event) {
                 setChildren(element);
             });
         });
