@@ -11,7 +11,7 @@
   "repositories": [
     {
       "type": "git",
-      "url": "https://github.com/webetdesign/wd-rgbd-bundle.git"
+      "url": "https://github.com/webetdesign/wd-rgpd-bundle.git"
     }
   ],
   "require": {
