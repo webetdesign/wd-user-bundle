@@ -1,37 +1,37 @@
 {
-  "name": "webetdesign/wd-user-bundle",
-  "type": "symfony-bundle",
-  "license": "proprietary",
-  "authors": [
-    {
-      "name": "Web&Design",
-      "homepage": "https://www.webetdesign.com"
+    "name": "webetdesign/wd-user-bundle",
+    "type": "symfony-bundle",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Web&Design",
+            "homepage": "https://www.webetdesign.com"
+        }
+    ],
+    "require": {
+        "php": "^7.4|^8.0",
+        "ext-json": "*",
+        "ext-zip": "*",
+        "knpuniversity/oauth2-client-bundle": "^2.8",
+        "symfony/orm-pack": "^2.7",
+        "symfony/dependency-injection": "^6.4",
+        "thenetworg/oauth2-azure": "^2.0"
+    },
+    "require-dev": {
+        "doctrine/doctrine-fixtures-bundle": "^3.4",
+        "sonata-project/admin-bundle": "^4",
+        "symfony/console": "^5.4 || ^6.0",
+        "symfony/filesystem": "^5.4 || ^6",
+        "symfony/phpunit-bridge": "^5.4 || ^6.0",
+        "symfony/twig-bundle": "^5.4 || ^6.0",
+        "symfony/yaml": "^5.4 || ^6.0"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "autoload": {
+        "psr-4": {
+            "WebEtDesign\\UserBundle\\": "src/"
+        }
     }
-  ],
-  "require": {
-    "php": "^7.4|^8.0",
-    "ext-json": "*",
-    "ext-zip": "*",
-    "knpuniversity/oauth2-client-bundle": "^2.8",
-    "symfony/orm-pack": "^2.0",
-    "symfony/dependency-injection": "^5.4 || ^6.0",
-    "thenetworg/oauth2-azure": "^2.0"
-  },
-  "require-dev": {
-    "doctrine/doctrine-fixtures-bundle": "^3.4",
-    "sonata-project/admin-bundle": "^4",
-    "symfony/console": "^5.4 || ^6.0",
-    "symfony/filesystem": "^5.4 || ^6",
-    "symfony/phpunit-bridge": "^5.4 || ^6.0",
-    "symfony/twig-bundle": "^5.4 || ^6.0",
-    "symfony/yaml": "^5.4 || ^6.0"
-  },
-  "config": {
-    "sort-packages": true
-  },
-  "autoload": {
-    "psr-4": {
-      "WebEtDesign\\UserBundle\\": "src/"
-    }
-  }
 }
