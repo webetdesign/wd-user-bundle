@@ -6,6 +6,7 @@ namespace WebEtDesign\UserBundle\Entity;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ORM\MappedSuperclass]
 abstract class WDGroup
 {
     #[ORM\Id]
