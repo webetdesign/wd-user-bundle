@@ -28,7 +28,7 @@ class AzurePassport extends SelfValidatingPassport
 
     public function getUser(): UserInterface
     {
-        if (null === $this->user) {
+        if (!isset($this->user)) {
             if (!$this->hasBadge(AzureUserBadge::class)) {
                 throw new \LogicException('Cannot get the Security user, no username or UserBadge configured for this passport.');
             }
