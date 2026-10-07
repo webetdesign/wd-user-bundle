@@ -4,18 +4,13 @@
 namespace WebEtDesign\UserBundle\Exporter;
 
 
-use Doctrine\Common\Annotations\AnnotationReader;
 use ReflectionProperty;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Vich\UploaderBundle\Mapping\Annotation\UploadableField;
+use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 class ExporterVich implements ExporterFileInterface
 {
-    /**
-     * @var AnnotationReader
-     */
-    protected AnnotationReader $reader;
     /**
      * @var ParameterBagInterface
      */
@@ -24,38 +19,49 @@ class ExporterVich implements ExporterFileInterface
      * @var ?UploaderHelper
      */
     private ?UploaderHelper $vichHelper;
+    /**
+     * @var ?PropertyMappingFactory
+     */
+    private ?PropertyMappingFactory $mappingFactory;
 
     /**
      * @inheritDoc
      */
-    public function __construct(ParameterBagInterface $parameterBag, ?UploaderHelper $vichHelper = null)
-    {
-        $this->reader       = new AnnotationReader();
-        $this->parameterBag = $parameterBag;
-        $this->vichHelper   = $vichHelper;
+    public function __construct(
+        ParameterBagInterface $parameterBag,
+        ?UploaderHelper $vichHelper = null,
+        ?PropertyMappingFactory $mappingFactory = null
+    ) {
+        $this->parameterBag   = $parameterBag;
+        $this->vichHelper     = $vichHelper;
+        $this->mappingFactory = $mappingFactory;
     }
 
 
+    /**
+     * The Vich mapping is read through Vich's own metadata (attributes,
+     * annotations, YAML or XML, as configured), not through docblock
+     * annotations only.
+     */
     public function doExport(
         string $tmpDir,
         $object,
         ?ReflectionProperty $property = null
     ) {
-        if ($this->vichHelper === null) {
+        if ($this->vichHelper === null || $this->mappingFactory === null) {
             return null;
         }
 
-        /** @var UploadableField $annotation */
-        $annotation = $this->reader->getPropertyAnnotation($property, UploadableField::class);
-        $imgPath    = $this->vichHelper->asset($object, $property->getName());
+        $mapping = $this->mappingFactory->fromField($object, $property->getName());
+        $imgPath = $this->vichHelper->asset($object, $property->getName());
 
-        if ($imgPath === null || $annotation === null) {
+        if ($imgPath === null || $mapping === null) {
             return null;
         }
 
        try{
            $publicDir = $this->parameterBag->get('kernel.project_dir') . '/public';
-           $getter    = 'get' . ucfirst($annotation->getFileNameProperty());
+           $getter    = 'get' . ucfirst($mapping->getFileNamePropertyName());
 
            $path    = $publicDir . $imgPath;
            $newPath = $tmpDir . '/' . $object->$getter();
