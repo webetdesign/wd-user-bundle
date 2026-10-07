@@ -14,9 +14,9 @@ class AzurePassport extends SelfValidatingPassport
 
     public function __construct(
         OAuth2ClientInterface $client,
-        callable $userLoader = null,
-        AuthUserHelper $userHelper = null,
-        string $clientName = null,
+        ?callable $userLoader = null,
+        ?AuthUserHelper $userHelper = null,
+        ?string $clientName = null,
         array $badges = []
     ) {
         $userData = $client->fetchUserFromToken($client->getAccessToken());

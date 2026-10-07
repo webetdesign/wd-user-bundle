@@ -21,7 +21,7 @@ class UserCreateCommand extends Command
     public function __construct(
         protected UserPasswordHasherInterface $passwordHasher,
         protected EntityManagerInterface $em,
-        string $name = null
+        ?string $name = null
     ) {
         parent::__construct($name);
     }

@@ -18,7 +18,7 @@ class PasswordStrength extends Constraint
         public int $minLength = 6,
         public ?int $minStrength = 3,
         public bool $unicodeEquality = false,
-        array $groups = null,
+        ?array $groups = null,
         mixed $payload = null
     ) {
         parent::__construct([], $groups, $payload);

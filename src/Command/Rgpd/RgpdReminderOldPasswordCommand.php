@@ -30,7 +30,7 @@ class RgpdReminderOldPasswordCommand extends Command
         private EventDispatcherInterface $eventDispatcher,
         private RouterInterface $router,
         private ParameterBagInterface $parameterBag,
-        string $name = null
+        ?string $name = null
     ) {
         parent::__construct($name);
     }
