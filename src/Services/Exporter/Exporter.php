@@ -4,26 +4,20 @@
 namespace WebEtDesign\UserBundle\Services\Exporter;
 
 
-use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use ReflectionClass;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
-use WebEtDesign\UserBundle\Annotations\Exportable;
+use WebEtDesign\UserBundle\Attribute\Exportable;
 use WebEtDesign\UserBundle\Exporter\ExporterFileInterface;
 use WebEtDesign\UserBundle\Utils\LoopGuard;
 use ZipArchive;
 
 class Exporter implements ExporterInterface
 {
-    /**
-     * @var AnnotationReader
-     */
-    protected AnnotationReader $reader;
     /**
      * @var EntityManagerInterface
      */
@@ -55,7 +49,6 @@ class Exporter implements ExporterInterface
         ContainerInterface $container,
         RouterInterface $router
     ) {
-        $this->reader    = new AnnotationReader();
         $this->em        = $em;
         $this->loopGuard = new LoopGuard();
         $this->container = $container;
@@ -86,19 +79,20 @@ class Exporter implements ExporterInterface
         $className = $metadata->rootEntityName;
         $shortName = $metadata->getReflectionClass()->getShortName();
 
-        if (($classAnnotation = $this->getAnnotation($className))) {
+        if (($classAttribute = $this->getExportable($className))) {
             if ($this->loopGuard->contains($className, $object->getId())) {
-                return (!empty($classAnnotation->getName()) ? $classAnnotation->getName() : $shortName) . ' ' . $object->getId();
+                return (!empty($classAttribute->getName()) ? $classAttribute->getName() : $shortName) . ' ' . $object->getId();
             }
             $this->loopGuard->add($className, $object->getId());
 
             $reflectionClass = $metadata->getReflectionClass();
             foreach ($reflectionClass->getProperties() as $property) {
-                /** @var Exportable $annotation */
-                if (($annotation = $this->reader->getPropertyAnnotation($property,
-                    Exportable::class))) {
+                $attributes = $property->getAttributes(Exportable::class);
+                if (!empty($attributes)) {
+                    /** @var Exportable $attribute */
+                    $attribute = $attributes[0]->newInstance();
 
-                    $name = !empty($annotation->getName()) ? $annotation->getName() : $property->getName();
+                    $name = !empty($attribute->getName()) ? $attribute->getName() : $property->getName();
 
                     if ($metadata->hasField($property->getName())) {
                         $getter = 'get' . ucfirst($property->getName());
@@ -107,36 +101,27 @@ class Exporter implements ExporterInterface
                     }
 
                     if ($metadata->hasAssociation($property->getName())) {
-                        $mapping = $metadata->getAssociationMapping($property->getName());
-                        switch ($mapping['type']) {
-                            case ClassMetadataInfo::MANY_TO_MANY:
-                            case ClassMetadataInfo::ONE_TO_MANY:
-                                $getter = 'get' . ucfirst($property->getName());
-
-                                $output[$name] = [];
-                                foreach ($object->$getter() as $item) {
-                                    $output[$name][] = $item ? $this->doExport($item) : null;
-                                }
-                                break;
-                            case ClassMetadataInfo::MANY_TO_ONE:
-                            case ClassMetadataInfo::ONE_TO_ONE:
-                                $getter = 'get' . ucfirst($property->getName());
-                                if ($annotation->getType() === Exportable::TYPE_SONATA_MEDIA) {
-                                    $exporter = $this->getExporter(Exportable::TYPE_SONATA_MEDIA);
-                                    if ($exporter) {
-                                        $output[$name] = $object->$getter() ? $this->doExport($object->$getter()) : null;
-                                    } else {
-                                        $output[$name] = null;
-                                    }
-                                } else {
+                        $getter = 'get' . ucfirst($property->getName());
+                        if ($metadata->isCollectionValuedAssociation($property->getName())) {
+                            $output[$name] = [];
+                            foreach ($object->$getter() as $item) {
+                                $output[$name][] = $item ? $this->doExport($item) : null;
+                            }
+                        } elseif ($metadata->isSingleValuedAssociation($property->getName())) {
+                            if ($attribute->getType() === Exportable::TYPE_SONATA_MEDIA) {
+                                $exporter = $this->getExporter(Exportable::TYPE_SONATA_MEDIA);
+                                if ($exporter) {
                                     $output[$name] = $object->$getter() ? $this->doExport($object->$getter()) : null;
+                                } else {
+                                    $output[$name] = null;
                                 }
-
-                                break;
+                            } else {
+                                $output[$name] = $object->$getter() ? $this->doExport($object->$getter()) : null;
+                            }
                         }
                     }
 
-                    if ($annotation->getType() === Exportable::TYPE_VICH_UPLOADER) {
+                    if ($attribute->getType() === Exportable::TYPE_VICH_UPLOADER) {
                         $exporter = $this->getExporter(Exportable::TYPE_VICH_UPLOADER);
                         if ($exporter) {
                             $output[$name] = $exporter->doExport($this->getTmpDir(), $object,
@@ -154,11 +139,13 @@ class Exporter implements ExporterInterface
     }
 
 
-    private function getAnnotation(string $className): ?Exportable
+    private function getExportable(string $className): ?Exportable
     {
         $reflectionClass = new ReflectionClass($className);
 
-        return $this->reader->getClassAnnotation($reflectionClass, Exportable::class);
+        $attributes = $reflectionClass->getAttributes(Exportable::class);
+
+        return !empty($attributes) ? $attributes[0]->newInstance() : null;
     }
 
     private function getTmpDir()
