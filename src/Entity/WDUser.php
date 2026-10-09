@@ -389,14 +389,7 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
      */
     public function serialize(): ?string
     {
-        return serialize(
-            [
-                $this->password,
-                $this->enabled,
-                $this->id,
-                $this->email,
-            ]
-        );
+        return serialize(self::__serialize());
     }
 
     /**
@@ -404,13 +397,7 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
      */
     public function unserialize($serialized)
     {
-        $data = unserialize($serialized);
-        [
-            $this->password,
-            $this->enabled,
-            $this->id,
-            $this->email,
-        ] = $data;
+        self::__unserialize(unserialize($serialized, ['allowed_classes' => false]));
     }
 
     public function __serialize(): array
@@ -420,16 +407,27 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
             $this->enabled,
             $this->id,
             $this->email,
+            $this->username,
+            $this->permissions,
         ];
     }
 
     public function __unserialize(array $data): void
     {
+        // Old four-field sessions have no recoverable identifier or permissions.
+        // Preserve their non-identity fields, but require a fresh authentication.
+        if (count($data) === 4) {
+            $data[1] = false;
+            $data[4] = null;
+            $data[5] = [];
+        }
         [
             $this->password,
             $this->enabled,
             $this->id,
             $this->email,
+            $this->username,
+            $this->permissions,
         ] = $data;
     }
 }

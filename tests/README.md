@@ -1,5 +1,21 @@
 # RGPD attribute/metadata regression tests
 
+## Security runtime regression suite
+
+```sh
+TMPDIR=/path/to/isolated/scratch php -d error_reporting=-1 -d display_errors=1 tests/security-runtime.php /path/to/vendor/autoload.php
+```
+
+Requires the bundle's dependency tree plus Symfony FrameworkBundle, SecurityHttp, SecurityCsrf, PasswordHasher and ErrorHandler (tested with Symfony 7.4 and PHP 8.5). Optional second argument selects one named case. The source PSR-4 mapping is prepended; the installed bundle is not modified.
+
+Covers magic and legacy parent serialization, child magic envelopes with group roles, nullable/disabled users, legacy four-value sessions, form credentials and failure sessions, Azure failure sessions and lazy client selection. Real Symfony password/CSRF listeners accept synthetic valid inputs and reject invalid inputs. CSRF, login-attempt, remember-me and password-upgrade badges remain present. Azure redirect is an offline boundary double: no provider or external network is used. Controller rendering is intercepted, not a Twig/browser test. No kernel or database is used.
+
+**Session compatibility:** new parent payloads append username and permissions to the existing four positional fields. Existing child envelopes can continue calling parent serialization. Old four-value payloads are readable, but lack a trustworthy username/permissions: they restore an empty identifier, no direct permissions and `enabled=false`, requiring fresh authentication; email is never substituted for username. Child group persistence stays the child's responsibility. Do not claim old authenticated sessions survive this change.
+
+The `bundle_build_no_deprecation` diagnostic loads the unmodified bundle under Symfony DebugClassLoader and calls inherited `build()`. No WDUserBundle `build()` deprecation was reproduced on the tested Symfony 7.4 dependency tree, so no speculative override was added.
+
+The WDUser source retains its existing CRLF line endings. Check whitespace without treating CRLF as trailing whitespace: `git -c core.whitespace=cr-at-eol diff --check` (does not change repository configuration).
+
 Run with PHP 8.2+ and an installed dependency tree that provides Doctrine ORM 2.20 or 3.x, Symfony Cache/Config/DependencyInjection/EventDispatcher/Filesystem/Finder/Routing and ext-zip:
 
 ```sh

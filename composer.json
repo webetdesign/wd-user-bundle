@@ -1,5 +1,6 @@
 {
     "name": "webetdesign/wd-user-bundle",
+    "description": "User management, authentication and GDPR services for Symfony applications.",
     "type": "symfony-bundle",
     "license": "proprietary",
     "authors": [

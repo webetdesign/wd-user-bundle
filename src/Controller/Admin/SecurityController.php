@@ -51,9 +51,10 @@ class SecurityController extends AbstractController
             // loop on user_bundle's asure_directory clients config to find on available client
             foreach ($configClients as $config) {
                 if ($config['enabled']) {
-                    $client  = $clientRegistry->getClient($config['client_name']);
                     $domains = implode('|', array_map(fn($domain) => preg_quote($domain), $config['domains']));
-                    if ($client && preg_match("/$domains/", $email)) {
+                    if (preg_match("/$domains/", $email)) {
+                        // Resolve only the selected client; other factories may require unavailable routes.
+                        $client = $clientRegistry->getClient($config['client_name']);
                         // Client are found and activated, we redirect user on azure auth
                         return $client->redirect(
                             ['openid', 'email', 'profile'],
