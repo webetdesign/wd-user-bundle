@@ -57,6 +57,10 @@ class WDUserBundle extends AbstractBundle
             $config['azure_directory']['clients']
         );
         $container->parameters()->set(
+            'wd_user.impersonate.login_route',
+            $config['impersonate']['login_route']
+        );
+        $container->parameters()->set(
             'wd_user.impersonate.logout_route',
             $config['impersonate']['logout_route']
         );
@@ -83,6 +87,10 @@ class WDUserBundle extends AbstractBundle
         $container->parameters()->set(
             'wd_user.security.max_attempts',
             $config['security']['max_attempts']
+        );
+        $container->parameters()->set(
+            'wd_user.security.cleanup_delay',
+            $config['security']['cleanup_delay']
         );
         $container->parameters()->set(
             'wd_user.inactivity.duration',
@@ -149,6 +157,7 @@ class WDUserBundle extends AbstractBundle
             ->end()
             ->arrayNode('impersonate')->addDefaultsIfNotSet()
                 ->children()
+                    ->scalarNode('login_route')->defaultValue('homepage')->end()
                     ->scalarNode('logout_route')->defaultValue('admin_app_user_user_list')->end()
                 ->end()
             ->end()
@@ -174,8 +183,11 @@ class WDUserBundle extends AbstractBundle
             ->end()
             ->arrayNode('security')->addDefaultsIfNotSet()
                 ->children()
+                    // Fenêtre glissante de comptage des tentatives, en SECONDES.
                     ->scalarNode('delay')->defaultValue(15)->end()
                     ->scalarNode('max_attempts')->defaultValue(5)->end()
+                    // Rétention des tentatives en base pour rgpd:clean-login-attempts, en MINUTES.
+                    ->integerNode('cleanup_delay')->defaultValue(43200)->end()
                 ->end()
             ->end()
             ->append($this->addAzureConfig())

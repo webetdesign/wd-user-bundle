@@ -6,7 +6,13 @@ namespace WebEtDesign\UserBundle\Event;
 use Symfony\Contracts\EventDispatcher\Event;
 use WebEtDesign\MailerBundle\Attribute\MailEvent;
 
-#[MailEvent(name: self::NAME, label: 'Routine rappel mis à jour mot de passe obsolète')]
+#[MailEvent(
+    name: self::NAME,
+    label: 'Routine rappel mise à jour mot de passe obsolète',
+    subject: 'Mise à jour mot de passe obsolète',
+    templateHtml: '@WDUser/emails/ROUTINE_CHANGE_OLD_PASSWORD_REMINDER.html.twig',
+    templateText: '@WDUser/emails/ROUTINE_CHANGE_OLD_PASSWORD_REMINDER.txt.twig'
+)]
 class RoutineChangeOldPasswordReminder extends Event
 {
     public const NAME = 'ROUTINE_CHANGE_OLD_PASSWORD_REMINDER';

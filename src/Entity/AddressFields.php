@@ -47,7 +47,7 @@ trait AddressFields
      * @param string|null $address
      * @return AddressFields
      */
-    public function setAddress(?string $address): self
+    public function setAddress(?string $address): static
     {
         $this->address = $address;
         return $this;
@@ -65,7 +65,7 @@ trait AddressFields
      * @param string|null $address2
      * @return AddressFields
      */
-    public function setAddress2(?string $address2): self
+    public function setAddress2(?string $address2): static
     {
         $this->address2 = $address2;
         return $this;
@@ -83,7 +83,7 @@ trait AddressFields
      * @param string|null $city
      * @return AddressFields
      */
-    public function setCity(?string $city): self
+    public function setCity(?string $city): static
     {
         $this->city = $city;
         return $this;
@@ -101,7 +101,7 @@ trait AddressFields
      * @param string|null $zipCode
      * @return AddressFields
      */
-    public function setZipCode(?string $zipCode): self
+    public function setZipCode(?string $zipCode): static
     {
         $this->zipCode = $zipCode;
         return $this;
@@ -119,7 +119,7 @@ trait AddressFields
      * @param string|null $country
      * @return AddressFields
      */
-    public function setCountry(?string $country): self
+    public function setCountry(?string $country): static
     {
         $this->country = $country;
         return $this;

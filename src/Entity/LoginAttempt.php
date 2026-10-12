@@ -9,6 +9,10 @@ use WebEtDesign\UserBundle\Repository\LoginAttemptRepository;
 
 #[ORM\Entity(repositoryClass: LoginAttemptRepository::class)]
 #[ORM\Table(name: "user__login_attempt")]
+// Sans ces index, la table n'avait que sa PRIMARY : la vérification anti-brute-force et la
+// purge des tentatives balayaient l'intégralité de la table à chaque authentification.
+#[ORM\Index(name: "idx_login_attempt_lookup", columns: ["ip_address", "username", "date"])]
+#[ORM\Index(name: "idx_login_attempt_date", columns: ["date"])]
 class LoginAttempt
 {
     #[ORM\Id]
@@ -61,28 +65,28 @@ class LoginAttempt
         return $this->firewall;
     }
 
-    public function setIpAddress(?string $ipAddress): self
+    public function setIpAddress(?string $ipAddress): static
     {
         $this->ipAddress = $ipAddress;
 
         return $this;
     }
 
-    public function setDate(DateTime $date): self
+    public function setDate(DateTime $date): static
     {
         $this->date = $date;
 
         return $this;
     }
 
-    public function setUsername(?string $username): self
+    public function setUsername(?string $username): static
     {
         $this->username = $username;
 
         return $this;
     }
 
-    public function setFirewall(?string $firewall): self
+    public function setFirewall(?string $firewall): static
     {
         $this->firewall = $firewall;
 

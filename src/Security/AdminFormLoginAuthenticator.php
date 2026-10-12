@@ -74,7 +74,7 @@ class AdminFormLoginAuthenticator extends AbstractAuthenticator
             $passport->addBadge(new PasswordUpgradeBadge($credentials['password'], $this->userProvider));
         }
 
-        $passport->addBadge(new LoginAttemptBadge($request->getClientIp(), $request->get('_username')));
+        $passport->addBadge(new LoginAttemptBadge($request->getClientIp(), $request->request->get('_username')));
 
         return $passport;
     }
@@ -97,14 +97,14 @@ class AdminFormLoginAuthenticator extends AbstractAuthenticator
     private function getCredentials(Request $request): array
     {
         $credentials               = [];
-        $credentials['csrf_token'] = $request->get($this->options['csrf_parameter']);
+        $credentials['csrf_token'] = $request->request->get($this->options['csrf_parameter']);
 
         if ($this->options['post_only']) {
             $credentials['username'] = $request->request->get($this->options['username_parameter']);
             $credentials['password'] = $request->request->get($this->options['password_parameter'], '');
         } else {
-            $credentials['username'] = $request->get($this->options['username_parameter']);
-            $credentials['password'] = $request->get($this->options['password_parameter'], '');
+            $credentials['username'] = $request->request->get($this->options['username_parameter']);
+            $credentials['password'] = $request->request->get($this->options['password_parameter'], '');
         }
 
         if (!\is_string($credentials['username']) && !$credentials['username'] instanceof \Stringable) {

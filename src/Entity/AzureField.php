@@ -19,7 +19,7 @@ trait AzureField
         return $this->azureId;
     }
 
-    public function setAzureId(?string $azureId): self
+    public function setAzureId(?string $azureId): static
     {
         $this->azureId = $azureId;
         return $this;

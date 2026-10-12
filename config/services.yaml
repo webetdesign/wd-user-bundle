@@ -3,6 +3,9 @@ services:
     autowire: true      # Automatically injects dependencies in your services.
     autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
+  Symfony\Component\DependencyInjection\ContainerInterface:
+    alias: service_container
+
   translation_activator:
     class: WebEtDesign\UserBundle\Security\RoleActivator
     arguments: [ "@security.authorization_checker" ]
@@ -15,6 +18,14 @@ services:
   WebEtDesign\UserBundle\Controller\:
     resource: '../src/Controller/'
     tags: [ 'controller.service_arguments' ]
+
+  WebEtDesign\UserBundle\Command\Rgpd\RgpdUserExportCommand:
+    autowire: true
+    autoconfigure: true
+
+  WebEtDesign\UserBundle\Command\Rgpd\RgpdUserAnonymizeCommand:
+    autowire: true
+    autoconfigure: true
 
   # Service Roles User
   WebEtDesign\UserBundle\Handler\VoterSecurityHandler:
@@ -34,4 +45,3 @@ services:
     class: WebEtDesign\UserBundle\Handler\VoterSecurityHandler
     arguments:
       $superAdminRoles: 'ROLE_SUPER_ADMIN'
-

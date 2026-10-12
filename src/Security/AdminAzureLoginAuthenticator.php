@@ -44,13 +44,13 @@ class AdminAzureLoginAuthenticator extends AbstractAuthenticator
 
     public function authenticate(Request $request): Passport
     {
-        $client = $this->clientRegistry->getClient($request->get('client_name'));
+        $client = $this->clientRegistry->getClient($request->attributes->get('client_name'));
 
         return new AzurePassport(
             $client,
             [$this->userProvider, 'loadUserByIdentifier'],
             $this->userHelper,
-            $request->get('client_name')
+            $request->attributes->get('client_name')
         );
     }
 
