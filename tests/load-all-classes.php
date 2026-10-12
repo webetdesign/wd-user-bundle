@@ -10,9 +10,11 @@ declare(strict_types=1);
  * Usage: php tests/load-all-classes.php [path/to/vendor/autoload.php]
  */
 
-require $argv[1] ?? __DIR__ . '/../vendor/autoload.php';
+$loader = require $argv[1] ?? __DIR__ . '/../vendor/autoload.php';
 
 $srcDir = realpath(__DIR__ . '/../src');
+// Test this checkout's sources, not the copy installed under vendor/.
+$loader->addPsr4('WebEtDesign\\UserBundle\\', $srcDir, true);
 $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($srcDir, FilesystemIterator::SKIP_DOTS));
 $checked = 0;
 $problems = 0;
