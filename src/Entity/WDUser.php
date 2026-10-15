@@ -182,9 +182,10 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
     /**
      * @see UserInterface
      */
+    #[\Deprecated]
     public function eraseCredentials(): void
     {
-        // If you store any temporary, sensitive data on the user, clear it here
+        // Compatibility only: authentication and serialization clear this independently.
         $this->plainPassword = null;
     }
 
@@ -393,6 +394,9 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
 
     public function __serialize(): array
     {
+        // Never retain temporary credentials on the live object after session storage.
+        $this->plainPassword = null;
+
         return [
             $this->password,
             $this->enabled,
@@ -405,6 +409,9 @@ abstract class WDUser implements UserInterface, Serializable, JsonSerializable, 
 
     public function __unserialize(array $data): void
     {
+        // This can also be called on an existing object by the legacy API.
+        $this->plainPassword = null;
+
         // Old four-field sessions have no recoverable identifier or permissions.
         // Preserve their non-identity fields, but require a fresh authentication.
         if (count($data) === 4) {

@@ -92,7 +92,7 @@ class ResettingController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $encoded = $this->userPasswordHasher->hashPassword($user, $user->getPlainPassword());
 
-            $user->eraseCredentials();
+            $user->setPlainPassword(null);
             $user->setConfirmationToken(null);
             $this->userRepository->upgradePassword($user, $encoded);
 
